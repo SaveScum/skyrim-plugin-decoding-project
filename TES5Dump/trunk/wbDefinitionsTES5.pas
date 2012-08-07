@@ -12547,7 +12547,6 @@ begin
         wbFloat('W')
       ]);
 
-// Happens 43 Times
   wbPHWT := wbRStruct('FaceFX Phonemes', [
     wbRStruct('FaceFX - IY', [wbPhonemeTargets], []),
     wbRStruct('FaceFX - IH', [wbPhonemeTargets], []),
@@ -12689,8 +12688,6 @@ begin
         {0x00000008}'Unknown 4',
         {0x00000010}'Unknown 5',
         {0x00000008}'Unknown 4',
-        {0x00000010}'Unknown 5',
-        {0x00000010}'Unknown 5',
         {0x00000020}'Unknown 6',
         {0x00000040}'Unknown 7',
         {0x00000080}'Unknown 8',
