@@ -903,12 +903,15 @@ var
   wbCELLDATAFlags: IwbFlagsDef;
   wbBipedObjectEnum: IwbEnumDef;
   wbRACE_VNAMFlags: IwbIntegerDef;
+  wbRACE_DATAFlags01: IwbIntegerDef;
+  wbRACE_DATAFlags02: IwbIntegerDef;
+  wbPhonemeTargets: IwbSubRecordDef;
   wbNoseMorphFlags: IwbIntegerDef;
   wbBrowMorphFlags: IwbIntegerDef;
   wbEyesMorphFlags01: IwbIntegerDef;
   wbEyesMorphFlags02: IwbIntegerDef;
   wbLipMorphFlags: IwbIntegerDef;
-  wbPHWT: IwbSubRecordArrayDef;
+  wbPHWT: IwbSubRecordStructDef;
   wbMorphs: IwbSubRecordStructDef;
 // --- Pack ---
   wbPKDT: IwbSubRecordDef;
@@ -9233,9 +9236,11 @@ begin
   ]);
 
   wbRecord(FLST, 'FormID List', [
-    wbString(EDID, 'Editor ID', 0, cpBenign, True, nil, wbFLSTEDIDAfterSet),
-    wbRArrayS('FormIDs', wbFormID(LNAM, 'FormID'), cpNormal, False, nil, nil, nil, wbFLSTLNAMIsSorted)
+    wbString(EDID, 'Editor lse, nil, nil, nil, wbFLSTLNAMIsSorted)
   ]);
+
+//------------------------------------------------------------------------------
+// EDID      FULL DESC CTD);
 
 //------------------------------------------------------------------------------
 // EDID      FULL DESC CTDA CTDA DATA NNAM
@@ -11950,9 +11955,10 @@ begin
       {6} wbFormIDCk('Keyword', [KYWD]),
       {7} wbByteArray('Unknown', 4, cpIgnore),
       {8} wbByteArray('Alias ID', 4),
-      {9} wbFormIDCkNoReach('Reference', [REFR, PGRE, PMIS, ACHR, ACRE, PLYR], True),
-     {10} wbByteArray('Unknown', 4, cpIgnore),
-     {11} wbByteArray('Unknown', 4, cpIgnore),
+      {9} wbFormIDCkNoReach('R   wbStruct(IDLC, '', [
+      wbInteger( 'Animation Count', itU8),
+      wbByteArray('Unknown', 3)
+    ], cpNormwbByteArray('Unknown', 4, cpIgnore),
      {12} wbByteArray('Unknown', 4, cpIgnore)
     ]),
     wbInteger('Radius', itS32)
@@ -12443,31 +12449,150 @@ begin
       wbStruct(TINC, 'Reference Color', [
         wbInteger('Red', itU8),
         wbInteger('Green', itU8),
-        wbInteger('Blue', itU8),
-        wbByteArray('Unnknown', 1)
+        wbInteger('Blue', itU8)RACE_DATAFlags01 :=MPAI, 'Unknown', 0),
+      wbStruct(MPAV, 'Eye Variants', [
+        wbEyesMorphFlags01,
+        wbEyesMorphFlags02,
+        wbByteArray('Unknown', 3),
+        wbByteArray('Unknown', 4),
+        wbByteArray('Unknown', 4),
+        wbByteArray('Unknown', 4),
+        wbByteArray('Unknown', 4),
+        wbByteArray('Unknown', 4),
+        wbByteArray('Unknown', 4)
       ]),
-			wbUnknown(TINV),
-			wbUnknown(TIRS)
-    ], []))
-  ], []));
+      wbByteArray(MPAI, 'Unknown', 0),
+      wbStruct(MPAV, 'Lip Variants', [
+        wbLipMorphFlags,
+        wbByteArray('Unknown', 4),
+        wbByteArray('Unknown', 4),
+        wbByteArray('Unknown', 4),
+        wbByteArray('Unknown', 4),
+        wbByteArray('Unknown', 4),
+        wbByteArray('Unknown', 4),
+        wbByteArray('Unknown', 4)
+      ])
+    ], []);
 
-  wbRACE_VNAMFlags := wbInteger('Flags 3', itU16, wbFlags([
-        {0x00000001}'Hand To Hand Melee',
-        {0x00000002}'One Hand Sword',
-        {0x00000004}'One Hand Dagger',
-        {0x00000008}'One Hand Axe',
-        {0x00000010}'One Hand Mace',
-        {0x00000020}'Two Hand Sword',
-        {0x00000040}'Two Hand Axe',
-        {0x00000080}'Bow',
-        {0x00000100}'Staff',
-        {0x00000200}'Spell',
-        {0x00000400}'Shield',
-        {0x00000800}'Torch',
-        {0x00001000}'Crossbow',
-        {0x00002000}'Unknown 14',
-        {0x00004000}'Unknown 15',
-        {0x00008000}'Unknown 16',
+  wbRecord(RACE, 'Race', [
+    wbEDIDReq,
+    wbFULLReq,
+    wbDESCReq,
+    wbSPCT,
+    wbSPLOs,
+    wbFormIDCk(WNAM, 'Skin', [ARMO, NULL]),
+    wbBODT,
+    wbKeywords,
+    wbXNAMs,
+    wbStruct(DATA, '', [
+      wbArrayS('Skill Boosts', wbStructSK([0], 'Skill Boost', [
+        wbInteger('Skill', itS8, wbActorValueEnum),
+        wbInteger('Boost', itS8)
+      ]), 7),
+      wbByteArray('Unknown', 2),
+      wbFloat('Male Height'),
+      wbFloat('Female Height'),
+      wbFloat('Male Weight'),
+      wbFloat('Female Weight'),
+      wbInteger('Flags', itU32, wbFlags([
+        {0x00000001}'Playable',
+        {0x00000002}'FaceGen Head',
+        {0x00000004};
+
+  wbRACE_DATAFlags02 :=
+        {0x03000000}'Overlay Head Part List', {>>>Only one can be active<<<}
+        {0x08000000}'Override Head Part List', {>>>Only one can be active<<<}
+        {0x10000000}'Can Pickup Items',
+        {0x20000000}'Allow Multiple Membrane Shaders',
+        {0x40000000}'Can Dual Wield',
+        {0x80000000}'Avoids Roads'
+      ])),
+      wbFloat('Starting Health'),
+      wbFloat('Starting Magicka'),
+      wbFloat('Starting Stamina'),
+      wbFloat('Base Carry Weight'),
+      wbFloat('Base Mass'),
+      wbFloat('Accleration rate'),
+      wbFloat('Deceleration rate'),
+      wbInteger('Size', itU32, wbSizeIndexEnum),
+      wbInteger('Head Biped Object', itS32, wbBipedObjectEnum),
+      wbInteger('Hair Biped Object', itS32, wbBipedObjectEnum),
+      wbFloat('Injured Health Pct'),
+      // When Set to None this Equals FF FF FF FF
+      wbInteger('Shield Biped Object', itS32, wbBipedObjectEnum),
+      wbByteArray('Unknown', 4),
+      wbFloat('Health Regen'),
+      wbFloat('Magicka Regen'),
+      wbFloat('Unarmed Damage'),
+      wbFloat('Unarmed Reach'),
+      wbInteger('Body Biped Object', itS32, wbBipedObjectEnum),
+     ;
+
+  wbPhonemeTargets := wbStruct(PHWT, 'Phoneme Targets', [
+        wbFloat('Aah'),
+        wbFloat('BigAah'),
+        wbFloat('BMP'),
+        wbFloat('ChJsh'),
+        wbFloat('DST'),
+        wbFloat('Eee'),
+        wbFloat('Eh'),
+        wbFloat('FV'),
+        wbFloat('I'),
+        wbFloat('K'),
+        wbFloat('N'),
+        wbFloat('Oh'),
+        wbFloat('OohQ'),
+        wbFloat('R'),
+        wbFloat('TH'),
+        wbFloat('W')
+      ]);
+
+// Happens 43 Times
+  wbPHWT := wbRStruct('FaceFX Phonemes', [
+    wbRStruct('FaceFX - IY', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - IH', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - EH', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - EY', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - AE', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - AA', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - AW', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - AY', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - AH', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - AO', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - OY', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - OW', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - UH', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - UW', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - ER', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - AX', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - S', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - SH', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - Z', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - ZH', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - F', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - TH', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - V', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - DH', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - M', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - N', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - NG', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - L', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - R', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - W', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - Y', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - HH', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - B', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - D', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - JH', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - G', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - P', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - T', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - K', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - CH', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - SIL', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - SHOTSIL', [wbPhonemeTargets], []),
+    wbRStruct('FaceFX - FLAP', [wbPhonemeTargets], [])
+  ], []00}'Unknown 16',
         {0x00010000}'Unknown 17',
         {0x00020000}'Unknown 18',
         {0x00040000}'Unknown 19',
@@ -12531,55 +12656,7 @@ begin
         wbByteArray('Unknown', 4),
         wbByteArray('Unknown', 4)
       ]),
-      wbByteArray(MPAI, 'Unknown', 0),
-      wbStruct(MPAV, 'Eye Variants', [
-        wbEyesMorphFlags01,
-        wbEyesMorphFlags02,
-        wbByteArray('Unknown', 3),
-        wbByteArray('Unknown', 4),
-        wbByteArray('Unknown', 4),
-        wbByteArray('Unknown', 4),
-        wbByteArray('Unknown', 4),
-        wbByteArray('Unknown', 4),
-        wbByteArray('Unknown', 4)
-      ]),
-      wbByteArray(MPAI, 'Unknown', 0),
-      wbStruct(MPAV, 'Lip Variants', [
-        wbLipMorphFlags,
-        wbByteArray('Unknown', 4),
-        wbByteArray('Unknown', 4),
-        wbByteArray('Unknown', 4),
-        wbByteArray('Unknown', 4),
-        wbByteArray('Unknown', 4),
-        wbByteArray('Unknown', 4),
-        wbByteArray('Unknown', 4)
-      ])
-    ], []);
-
-  wbRecord(RACE, 'Race', [
-    wbEDIDReq,
-    wbFULLReq,
-    wbDESCReq,
-    wbSPCT,
-    wbSPLOs,
-    wbFormIDCk(WNAM, 'Skin', [ARMO, NULL]),
-    wbBODT,
-    wbKeywords,
-    wbXNAMs,
-    wbStruct(DATA, '', [
-      wbArrayS('Skill Boosts', wbStructSK([0], 'Skill Boost', [
-        wbInteger('Skill', itS8, wbActorValueEnum),
-        wbInteger('Boost', itS8)
-      ]), 7),
-      wbByteArray('Unknown', 2),
-      wbFloat('Male Height'),
-      wbFloat('Female Height'),
-      wbFloat('Male Weight'),
-      wbFloat('Female Weight'),
-      wbInteger('Flags', itU32, wbFlags([
-        {0x00000001}'Playable',
-        {0x00000002}'FaceGen Head',
-        {0x00000004}'Child',
+      wbByteArray(MPARACE_DATAFlags01'Child',
         {0x00000008}'Tilt Front/Back',
         {0x00000010}'Tilt Left/Right',
         {0x00000020}'No Shadow',
@@ -12603,41 +12680,16 @@ begin
         {0x00800000}'Allow Pickpocket',
         {0x01000000}'Always Use Proxy Controller',
         {0x02000000}'Don''t Show Weapon Blood',
-        {0x03000000}'Overlay Head Part List', {>>>Only one can be active<<<}
-        {0x08000000}'Override Head Part List', {>>>Only one can be active<<<}
-        {0x10000000}'Can Pickup Items',
-        {0x20000000}'Allow Multiple Membrane Shaders',
-        {0x40000000}'Can Dual Wield',
-        {0x80000000}'Avoids Roads'
-      ])),
-      wbFloat('Starting Health'),
-      wbFloat('Starting Magicka'),
-      wbFloat('Starting Stamina'),
-      wbFloat('Base Carry Weight'),
-      wbFloat('Base Mass'),
-      wbFloat('Accleration rate'),
-      wbFloat('Deceleration rate'),
-      wbInteger('Size', itU32, wbSizeIndexEnum),
-      wbInteger('Head Biped Object', itS32, wbBipedObjectEnum),
-      wbInteger('Hair Biped Object', itS32, wbBipedObjectEnum),
-      wbFloat('Injured Health Pct'),
-      // When Set to None this Equals FF FF FF FF
-      wbInteger('Shield Biped Object', itS32, wbBipedObjectEnum),
-      wbByteArray('Unknown', 4),
-      wbFloat('Health Regen'),
-      wbFloat('Magicka Regen'),
-      wbFloat('Unarmed Damage'),
-      wbFloat('Unarmed Reach'),
-      wbInteger('Body Biped Object', itS32, wbBipedObjectEnum),
-      wbFloat('Aim Angle Tolerance'),
-      wbByteArray('Unknown', 4),
-      wbFloat('Angular Acceleration Rate'),
-      wbFloat('Angular Tolerance'),
-      wbInteger('Flags 2', itU32, wbFlags([
-        {0x00000001}'Unknown 1',
-        {0x00000002}'Non-Hostile',
+ RACE_DATAFlags020x00000002}'Non-Hostile',
         {0x00000004}'Unknown 3',
         {0x00000008}'Unknown 4',
+        {0x00000010}'Unknown 5',
+        {0x00000008}'Unknown 4',
+        {0x00000010}'Unknown 5',
+        {0x00000008}'Unknown 4',
+        {0x00000010}'Unknown 5',
+        {0x00000008}'Unknown 4',
+        {0x00000010}'Unknown 5',
         {0x00000010}'Unknown 5',
         {0x00000020}'Unknown 6',
         {0x00000040}'Unknown 7',
@@ -14945,64 +14997,4 @@ begin
    wbAddGroupOrder(CPTH);
    wbAddGroupOrder(VTYP);
    wbAddGroupOrder(MATT);
-   wbAddGroupOrder(IPCT);
-   wbAddGroupOrder(IPDS);
-   wbAddGroupOrder(ARMA);
-   wbAddGroupOrder(ECZN);
-   wbAddGroupOrder(LCTN);
-   wbAddGroupOrder(MESG);
-   wbAddGroupOrder(RGDL); {Empty}
-   wbAddGroupOrder(DOBJ);
-   wbAddGroupOrder(LGTM);
-   wbAddGroupOrder(MUSC);
-   wbAddGroupOrder(FSTP);
-   wbAddGroupOrder(FSTS);
-   wbAddGroupOrder(SMBN);
-   wbAddGroupOrder(SMQN);
-   wbAddGroupOrder(SMEN);
-   wbAddGroupOrder(DLBR);
-   wbAddGroupOrder(MUST);
-   wbAddGroupOrder(DLVW);
-   wbAddGroupOrder(WOOP);
-   wbAddGroupOrder(SHOU);
-   wbAddGroupOrder(EQUP);
-   wbAddGroupOrder(RELA);
-   wbAddGroupOrder(SCEN);
-   wbAddGroupOrder(ASTP);
-   wbAddGroupOrder(OTFT);
-   wbAddGroupOrder(ARTO);
-   wbAddGroupOrder(MATO);
-   wbAddGroupOrder(MOVT);
-//   wbAddGroupOrder(HAZD);
-   wbAddGroupOrder(SNDR);
-   wbAddGroupOrder(DUAL);
-   wbAddGroupOrder(SNCT);
-   wbAddGroupOrder(SOPM);
-   wbAddGroupOrder(COLL);
-   wbAddGroupOrder(CLFM);
-   wbAddGroupOrder(REVB);
-end;
-
-procedure DefineTES5;
-begin
-  DefineTES5a;
-  DefineTES5b;
-  DefineTES5c;
-  DefineTES5d;
-  DefineTES5e;
-  DefineTES5f;
-  DefineTES5g;
-  DefineTES5h;
-  DefineTES5i;
-  DefineTES5j;
-  DefineTES5k;
-  DefineTES5l;
-  DefineTES5m;
-  DefineTES5n;
-  DefineTES5o;
-  DefineTES5p;
-  DefineTES5q;
-end;
-
-initialization
-end.
+   wbA
