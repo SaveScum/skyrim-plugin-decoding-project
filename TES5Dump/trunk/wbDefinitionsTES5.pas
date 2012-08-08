@@ -756,7 +756,6 @@ var
   wbEDID: IwbSubRecordDef;
   wbEDIDReq: IwbSubRecordDef;
   wbSoulGemEnum: IwbEnumDef;
-  wbBODT: IwbSubRecordDef;
   wbCOED: IwbSubRecordDef;
   wbXLCM: IwbSubRecordDef;
   wbEITM: IwbSubRecordDef;
@@ -863,6 +862,7 @@ var
   wbBoolU8: IwbIntegerDef;
   wbBoolU16: IwbIntegerDef;
   wbBoolU32: IwbIntegerDef;
+  wbBODT: IwbSubRecordDef;
   wbFULLFact: IwbSubRecordDef;
   wbScriptEntry: IwbStructDef;
   wbPropTypeEnum: IwbEnumDef;
@@ -902,6 +902,7 @@ var
   wbOwnership: IwbSubRecordStructDef;
   wbCELLDATAFlags: IwbFlagsDef;
   wbBipedObjectEnum: IwbEnumDef;
+  wbArmorTypeEnum: IwbEnumDef;
   wbRACE_VNAMFlags: IwbIntegerDef;
   wbRACE_DATAFlags01: IwbIntegerDef;
   wbRACE_DATAFlags02: IwbIntegerDef;
@@ -916,6 +917,7 @@ var
   wbSpells: IwbSubRecordStructDef;
   wbHeadPart: IwbSubRecordStructDef;
   wbTintMaskTypeEnum: IwbEnumDef;
+  wbBODTOld: IwbSubRecordDef;
 // --- Pack ---
   wbPKDT: IwbSubRecordDef;
   wbPLDT: IwbSubRecordDef;
@@ -1890,6 +1892,7 @@ begin
         Ord('s'): Result := 'Short';
         Ord('l'): Result := 'Long';
         Ord('f'): Result := 'Float';
+        Ord('b'): Result := 'Boolean';
       else
         Result := '<Unknown: '+IntToStr(aInt)+'>';
       end;
@@ -1897,7 +1900,7 @@ begin
     ctToSortKey: Result := Chr(aInt);
     ctCheck: begin
       case aInt of
-        Ord('s'), Ord('l'), Ord('f'): Result := '';
+        Ord('s'), Ord('l'), Ord('f'), Ord('b'): Result := '';
       else
         Result := '<Unknown: '+IntToStr(aInt)+'>';
       end;
@@ -2126,6 +2129,19 @@ begin
         end;
       end;
     end;
+end;
+
+function wbPHWTDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+var
+  Container: IwbContainer;
+begin
+  Result := 2;
+  if aElement.ElementType = etValue then
+    Container := aElement.Container
+  else
+    Container := aElement as IwbContainer;
+  if Container.DateSize = 64 then Result := 0
+  else if Container.DateSize = 32 then Result := 1
 end;
 
 function wbMGEFFAssocItemDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
@@ -4510,6 +4526,129 @@ begin
     wbArrayS(KWDA, '', wbFormIDCk('Keyword', [KYWD]), 0, cpNormal, True)
   ], []);
 
+  wbArmorTypeEnum := wbEnum([
+    'Light Armor',
+    'Heavy Armor',
+    'Clothing'
+  ]);
+
+  {>>> When Set to None this Equals FF FF FF FF <<<}
+  {>>> When NAME is user defined these will be incorrect <<<}
+  wbBipedObjectEnum := wbEnum([
+    'Head',
+    'Hair',
+    'Body',
+    'Hands',
+    'Forearms',
+    'Amulet',
+    'Ring',
+    'Feet',
+    'Calves',
+    'Shield',
+    'Body AddOn 1',
+    'Long Hair',
+    'Circlet',
+    'Body AddOn 2',
+    'Body AddOn 3',
+    'Body AddOn 4',
+    'Body AddOn 5',
+    'Body AddOn 6',
+    'Body AddOn 7',
+    'Body AddOn 8',
+    'Decapate Head',
+    'Decapate',
+    'Body AddOn 9',
+    'Body AddOn 10',
+    'Body AddOn 11',
+    'Body AddOn 12',
+    'Body AddOn 13',
+    'Body AddOn 14',
+    'Body AddOn 15',
+    'Body AddOn 16',
+    'Body AddOn 17',
+    'FX01'
+    ], [
+    -1, 'None'{>>> itS32 and -1 was used instead of $FFFFFFFF and itU32 <<<}
+  ]);
+
+    wbBODT := wbStruct(BODT, 'Body Template', [
+      wbInteger('First Person Flags', itU32, wbFlags([
+          {0x00000001} 'Head',
+          {0x00000002} 'Hair',
+          {0x00000004} 'Body',
+          {0x00000008} 'Hands',
+          {0x00000010} 'Forearms',
+          {0x00000020} 'Amulet',
+          {0x00000040} 'Ring',
+          {0x00000080} 'Feet',
+          {0x00000100} 'Calves',
+          {0x00000200} 'Shield',
+          {0x00000400} 'Body AddOn 1',
+          {0x00000800} 'Long Hair',
+          {0x00001000} 'Circlet',
+          {0x00002000} 'Body AddOn 2',
+          {0x00004000} 'Body AddOn 3',
+          {0x00008000} 'Body AddOn 4',
+          {0x00010000} 'Body AddOn 5',
+          {0x00020000} 'Body AddOn 6',
+          {0x00040000} 'Body AddOn 7',
+          {0x00080000} 'Body AddOn 8',
+          {0x00100000} 'Decapate Head',
+          {0x00200000} 'Decapate',
+          {0x00400000} 'Body AddOn 9',
+          {0x00800000} 'Body AddOn 10',
+          {0x01000000} 'Body AddOn 11',
+          {0x02000000} 'Body AddOn 12',
+          {0x03000000} 'Body AddOn 13',
+          {0x08000000} 'Body AddOn 14',
+          {0x10000000} 'Body AddOn 15',
+          {0x20000000} 'Body AddOn 16',
+          {0x40000000} 'Body AddOn 17',
+          {0x80000000} 'FX01'
+      ], True)),
+      wbInteger('General Flags', itU32, wbFlags([
+        {0x00000001}'Unknown 1',
+        {0x00000002}'Unknown 2',
+        {0x00000004}'Unknown 3',
+        {0x00000008}'Unknown 4',
+        {0x00000010}'Unknown 5',
+        {0x00000020}'Unknown 6',
+        {0x00000040}'Unknown 7',
+        {0x00000080}'Unknown 8',
+        {0x00000100}'Unknown 9',
+        {0x00000200}'Unknown 10',
+        {0x00000400}'Unknown 11',
+        {0x00000800}'Unknown 12',
+        {0x00001000}'Unknown 13',
+        {0x00002000}'Unknown 14',
+        {0x00004000}'Unknown 15',
+        {0x00008000}'Unknown 16',
+        {0x00010000}'Unknown 17',
+        {0x00020000}'Unknown 18',
+        {0x00040000}'Unknown 19',
+        {0x00080000}'Unknown 20',
+        {0x00100000}'Unknown 21',
+        {0x00200000}'Unknown 22',
+        {0x00400000}'Unknown 23',
+        {0x00800000}'Unknown 24',
+        {0x01000000}'Unknown 25',
+        {0x02000000}'Unknown 26',
+        {0x03000000}'Unknown 27',
+        {0x08000000}'Unknown 28',
+        {0x10000000}'Unknown 29',
+        {0x20000000}'Unknown 30',
+        {0x40000000}'Unknown 31',
+        {0x80000000}'Unknown 32'
+      ], True)),
+      wbInteger('Armor Type', itU32, wbArmorTypeEnum)
+    ], cpNormal, True);
+
+  wbBODTOld := wbStruct(BODT, 'Unknown', [
+    wbbyteArray('Unknown', 4),
+    wbbyteArray('Unknown', 4),
+    wbbyteArray('Unknown', 4)
+  ]);
+
   wbCOED := wbStructExSK(COED, [2], [0, 1], 'Extra Data', [
     {00} wbFormIDCkNoReach('Owner', [NPC_, FACT, NULL]),
     {04} wbUnion('Global Variable / Required Rank', wbCOEDOwnerDecider, [
@@ -6425,82 +6564,6 @@ begin
     wbMODLReq,
     wbString(BNAM, 'Type')
   ]);
-
-  wbBODT := wbStruct(BODT, 'Body Template', [
-      wbInteger('First Person', itU32, wbFlags([
-          {0x00000001} 'Head',
-          {0x00000002} 'Hair',
-          {0x00000004} 'Body',
-          {0x00000008} 'Hands',
-          {0x00000010} 'Forearms',
-          {0x00000020} 'Amulet',
-          {0x00000040} 'Ring',
-          {0x00000080} 'Feet',
-          {0x00000100} 'Calves',
-          {0x00000200} 'Shield',
-          {0x00000400} 'Body AddOn 1',
-          {0x00000800} 'Long Hair',
-          {0x00001000} 'Circlet',
-          {0x00002000} 'Body AddOn 2',
-          {0x00004000} 'Body AddOn 3',
-          {0x00008000} 'Body AddOn 4',
-          {0x00010000} 'Body AddOn 5',
-          {0x00020000} 'Body AddOn 6',
-          {0x00040000} 'Body AddOn 7',
-          {0x00080000} 'Body AddOn 8',
-          {0x00100000} 'Decapate Head',
-          {0x00200000} 'Decapate',
-          {0x00400000} 'Body AddOn 9',
-          {0x00800000} 'Body AddOn 10',
-          {0x01000000} 'Body AddOn 11',
-          {0x02000000} 'Body AddOn 12',
-          {0x03000000} 'Body AddOn 13',
-          {0x08000000} 'Body AddOn 14',
-          {0x10000000} 'Body AddOn 15',
-          {0x20000000} 'Body AddOn 16',
-          {0x40000000} 'Body AddOn 17',
-          {0x80000000} 'FX01'
-      ], True)),
-      wbInteger('General Flags', itU32, wbFlags([
-        {0x00000001}'Unknown 1',
-        {0x00000002}'Unknown 2',
-        {0x00000004}'Unknown 3',
-        {0x00000008}'Unknown 4',
-        {0x00000010}'Unknown 5',
-        {0x00000020}'Unknown 6',
-        {0x00000040}'Unknown 7',
-        {0x00000080}'Unknown 8',
-        {0x00000100}'Unknown 9',
-        {0x00000200}'Unknown 10',
-        {0x00000400}'Unknown 11',
-        {0x00000800}'Unknown 12',
-        {0x00001000}'Unknown 13',
-        {0x00002000}'Unknown 14',
-        {0x00004000}'Unknown 15',
-        {0x00008000}'Unknown 16',
-        {0x00010000}'Unknown 17',
-        {0x00020000}'Unknown 18',
-        {0x00040000}'Unknown 19',
-        {0x00080000}'Unknown 20',
-        {0x00100000}'Unknown 21',
-        {0x00200000}'Unknown 22',
-        {0x00400000}'Unknown 23',
-        {0x00800000}'Unknown 24',
-        {0x01000000}'Unknown 25',
-        {0x02000000}'Unknown 26',
-        {0x03000000}'Unknown 27',
-        {0x08000000}'Unknown 28',
-        {0x10000000}'Unknown 29',
-        {0x20000000}'Unknown 30',
-        {0x40000000}'Unknown 31',
-        {0x80000000}'Unknown 32'
-      ], True)),
-      wbInteger('Armor Type', itU32, wbEnum([
-        'Light Armor',
-        'Heavy Armor',
-        'Clothing'
-      ]))
-    ], cpNormal, True);
 
   wbRecord(ARMO, 'Armor', [
     wbEDIDReq,
@@ -9172,43 +9235,7 @@ begin
         wbFloat('Add'),
         wbUnknown
       ]),
-      wbStruct(_07_IAD, 'Sky Scale', [
-        wbFloat('Unknown'),
-        wbFloat('Multiply'),
-        wbUnknown
-      ]),
-      wbStruct(_47_IAD, 'Sky Scale', [
-        wbFloat('Unknown'),
-        wbFloat('Add'),
-        wbUnknown
-      ])
-    ], []),
-    wbUnknown(_08_IAD),
-    wbUnknown(_48_IAD),
-    wbUnknown(_09_IAD),
-    wbUnknown(_49_IAD),
-    wbUnknown(_0A_IAD),
-    wbUnknown(_4A_IAD),
-    wbUnknown(_0B_IAD),
-    wbUnknown(_4B_IAD),
-    wbUnknown(_0C_IAD),
-    wbUnknown(_4C_IAD),
-    wbUnknown(_0D_IAD),
-    wbUnknown(_4D_IAD),
-    wbUnknown(_0E_IAD),
-    wbUnknown(_4E_IAD),
-    wbUnknown(_0F_IAD),
-    wbUnknown(_4F_IAD),
-    wbUnknown(_10_IAD),
-    wbUnknown(_50_IAD),
-    wbRStruct('Cinematic', [
-      wbStruct(_11_IAD, 'Saturation', [
-        wbFloat('Unknown'),
-        wbFloat('Multiply'),
-        wbUnknown
-      ]),
-      wbStruct(_51_IAD, 'Saturation', [
-        wbFloat('Unknown'),
+  nknown'),
         wbFloat('Add'),
         wbUnknown
       ]),
@@ -9233,7 +9260,31 @@ begin
         wbUnknown
       ])
     ], []),
-    wbUnk-------------
+    wbUnknown(_14_IAD),
+    wbUnknown(_54_IAD)
+  ]);
+
+  wbRecord(FLST, 'FormID List', [
+    wbString(EDID, 'Editor ID', 0, cpBenign, True, nil, wbFLSTEDIDAfterSet),
+    wbRArrayS('FormIDs', wbFormID(LNAM, 'FormID'), cpNormal, False, nil, nil, nil, wbFLSTLNAMIsSorted)lags([
+//      {0x01} 'Calculate from all levels <= player''s level',
+//      {0x02} 'Cal
+// EDID      FULL DESC CTDA CTDA DATA NNAM
+  ]);
+
+//------------------------------------------------------------------------------
+// EDID      FULL DESC CTD);
+
+//-----------------------------------------------------CTDA CTDA PR-------------
+// EDID      FULL DESC CTD);
+
+//-----------------------------------------------------          PR-------------
+// EDID      FULL DESC CTD);
+
+//-----------------------------------------------------CTDA     lse, nil, nil, nil, wbFLSTLNAMIsSorted)
+  ]);
+
+//-----------------------------------------------------CTDA      PR-------------
 // EDID      FULL DESC CTD);
 
 //-----------------------------------------------------CTDA     lse, nil, nil, nil, wbFLSTLNAMIsSorted)
@@ -11907,53 +11958,43 @@ begin
       {0x00100000}'Unknown 21',
       {0x00200000}'Unknown 22',
       {0x00400000}'Unknown 23',
-      {0x00800000}'Unknown 24',
-      {0x01000000}'Unknown 25',
-      {0x02000000}'Unknown 26',
-      {0x03000000}'Unknown 27',
-      {0x08000000}'Unknown 28',
-      {0x10000000}'Unknown 29',
-      {0x20000000}'Unknown 30',
-      {0x40000000}'Unknown 31',
-      {0x80000000}'Unknown 32'
-    ]))
-  ], cpNormal, True);
-
-  wbPSDT := wbStruct(PSDT, 'Schedule', [
-    wbInteger('Month', itS8),
-    wbInteger('Day of week', itS8, wbEnum([
-      'Sunday',
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-      'Weekdays',
-      'Weekends',
-      'Monday, Wednesday, Friday',
-      'Tuesday, Thursday'
-    ], [
-      -1, 'Any'
-    ])),
-    wbInteger('Date', itU8),
-    wbInteger('Hour', itS8),
-    wbInteger('Minute', itS8),
-    wbByteArray('Unknown', 3),
-    wbInteger('Duration (minutes)', itS32)
-  ], cpNormal, True);
-
-  wbPLDT := wbStruct(PLDT, 'Location', [
-    wbInteger('Type', itS32, wbLocationEnum),
-    wbUnion('Location Value', wbPxDTLocationDecider, [
-      {0} wbFormIDCkNoReach('Reference', [REFR, PGRE, PMIS, ACHR, ACRE, PLYR], True),
-      {1} wbFormIDCkNoReach('Cell', [CELL]),
-      {2} wbByteArray('Unknown', 4, cpIgnore),
-      {3} wbByteArray('Unknown', 4, cpIgnore),
-      {4} wbFormIDCkNoReach('Object ID', [ACTI, DOOR, STAT, FURN, CREA, SPEL, NPC_, CONT, ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, LIGH, CHIP]),
+      {0x0080OOR, STAT, FURN, CREA, SPEL, NPC_, CONT, ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, LIGH, CHIP]),
       {5} wbInteger('Object Type', itU32, wbObjectTypeEnum),
       {6} wbFormIDCk('Keyword', [KYWD]),
-      {F, 'Flags', itU8, wbFlags([
+      {7} wbByteArray('Unknown', 4, cpIgnore),
+      {8} wbByteArray('Alias ID', 4),
+      {9} wbFormIDCkNoReach('Reference', [REFR, PGRE, PMIS, ACHR, ACRE, PLYR], True),
+     {10} wbByteArray('Unknown', 4, cpIgnore),
+     {11} wbByteArray('Unknown', 4, cpIgnore),
+     {12} wbByteArray('Unknown', 4, cpIgnore)
+    ]),
+    wbInteger('Radius', itS32)
+  ]);
+
+  wbPTDA := wbStruct(PTDA, 'Target Value', [
+    wbInteger('Type', itS32, wbEnum([
+      {0} 'Specific Reference',
+      {1} 'Object ID',
+      {2} 'Object Type',
+      {3} 'Linked Reference',
+      {4} 'Ref Alias',
+      {5} 'Unknown 5',
+      {6} 'Self'
+    ]), cpNormal, False, nil, nil, 2),
+    wbUnion('Target', wbPxDTLocationDecider, [
+      {0} wbFormIDCkNoReach('Reference', [ACHR, ACRE, REFR, PGRE, PMIS, PLYR], True),
+      {1} wbFormIDCkNoReach('Object ID', [ACTI, DOOR, STAT, FURN, CREA, SPEL, NPC_, CONT, ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, LIGH, FACT, FLST, IDLM, CHIP]),
+      {2} wbInteger('Object Type', itU32, wbObjectTypeEnum),
+      {3} wbFormID('Reference'),
+      {4} wbByteArray('Alias ID', 4),
+      {5} wbByteArray('Unknown', 4, cpIgnore),
+      {6} wbByteArray('Unknown', 4, cpIgnore)
+    ]),
+    wbInteger('Count / Distance', itS32)
+  ]);
+
+  wbIDLF := wbRStruct('Idle Animations', [
+    wbInteger(IDLF, 'Flags', itU8, wbFlags([
       'Run in Sequence',
       '',
       'Do Once'
@@ -12200,29 +12241,7 @@ begin
           wbUnknown(ALDN),
           wbRArray('Unknown - ALSP', wbRStruct('Unknown', [
             wbUnknown(ALSP)
-          ], []){>>> When Set to None this Equals FF FF FF FF <<<}
-  {>>> When NAME is user defined these will be incorrect <<<} [])),
-          wbRArray('Unknown - ALFC', wbRStruct('Unknown', [
-            wbUnknown(ALFC)
-          ], [])),
-          wbRArray('Unknown - ALPC', wbRStruct('Unknown', [
-            wbUnknown(ALPC)
-          ], [])),
-          wbUnknown(VTCK),
-          wbUnknown(ALED)
-        ], []),
-        wbRStruct('ALLS Struct', [
-          wbUnknown(ALLS),
-          wbString(ALID, 'Alias Name', 0, cpTranslate),
-          wbUnknown(FNAM),
-          wbUnknown(ALFI),
-          wbUnknown(ALFE),
-          wbUnknown(ALFD),
-          wbCTDAs,
-          wbUnknown(ALCO),
-          wbUnknown(ALFL),
-          wbUnknown(ALFA),
-          wbU{>>> itS32 and -1 was used instead of $FFFFFFFF and itU32 <<<}nknown(ALEQ),
+          ], [])
           wbUnknown(ALEA),
           wbUnknown(KNAM),
           wbUnknown(ALED)
@@ -12531,7 +12550,8 @@ begin
       wbInteger('Body Biped Object', itS32, wbBipedObjectEnum),
      ;
 
-  wbPhonemeTargets := wbStruct(PHWT, 'Phoneme Targets', [
+  wbPhonemeTargets := wbUnion(PHWT, 'Union', wbPHWTDecider, [
+    wbStruct('Phoneme Targets', [
         wbFloat('Aah'),
         wbFloat('BigAah'),
         wbFloat('BMP'),
@@ -12548,7 +12568,19 @@ begin
         wbFloat('R'),
         wbFloat('TH'),
         wbFloat('W')
-      ]);
+      ]),
+    wbStruct('Phoneme Targets', [
+        wbFloat('Aah'),
+        wbFloat('BigAah'),
+        wbFloat('BMP'),
+        wbFloat('ChJsh'),
+        wbFloat('DST'),
+        wbFloat('Eee'),
+        wbFloat('Eh'),
+        wbFloat('FV')
+      ]),
+      wbbyteArray('Unknown', 0)
+  ]);
 
   wbPHWT := wbRStruct('FaceFX Phonemes', [
     wbRStruct('FaceFX - IY', [wbPhonemeTargets], []),
@@ -12653,7 +12685,7 @@ rmIDCk(NAM7, 'Decapitation FX', [ARTO, NULL]),
     wbSpellay('Unknown', 4),
         wbByteArray('Unknown', 4)
       ]),
-      wbByteArray(MPAI, 'Unknown', 0),
+      wbByteArray(MPAI, 'U { I don't think there are XNAM fields. }nknown', 0),
       wbStruct(MPAV, 'Brow Variants', [
         wbBrowMorphFlags,
         wbByteArray('Unknown', 4),
@@ -12769,8 +12801,8 @@ rmIDCk(NAM7, 'Decapitation FX', [ARTO, NULL]),
         wbRArrayS('Parts', wbRStructSK([0], 'Part', [
           wbInteger(INDX, 'Index', itU32, wbBodyParS('Equip Slots', wbFormIDCk(QNAM, 'Equip Slot', [EQUP, NULL])),
     wbFormIDCk(UNES, 'Unarmed Equip Slot', [EQUP, NULL]),
-    wbPHWT,
-    wbRArrayS('Array PHTN', wbString(PHTN, 'Unknown''Eye', [EYES]),  0,  cpNormal, True),
+    wbRArrayS('Phoneme Target Names', wbString(PHTN, 'Name')),
+    wbPHWTye', [EYES]),  0,  cpNormal, True),
     wbFormIDCk(GNAM, 'Body Part Data', [BPTD, NULL]),
 	  wbEmpty(NAM2, 'Marker 2', cpNormal, True),
 	  wbEmpty(NAM3, 'Marker 3', cpNormal, True),
