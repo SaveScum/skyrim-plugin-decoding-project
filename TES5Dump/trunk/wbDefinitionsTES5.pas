@@ -4519,7 +4519,7 @@ begin
   wbBoolU32 := wbInteger('Boolean', itU32, wbEnum(['False', 'True']));
   wbLLCT := wbInteger(LLCT, 'Count', itU8);
   wbCITC := wbInteger(CITC, 'Count', itU32);
-  wbLVLD := wbInteger(LVLD, 'Chance none', itU8, nil, cpNormal, True);
+  wbLVLD := wbInteger(LVLD, 'Chance None', itU8, nil, cpNormal, True);
 
   wbKeywords := wbRStruct('Keywords', [
     wbInteger(KSIZ, 'Count', itU32), {>>> Needs Count Updated <<<}
@@ -9028,9 +9028,7 @@ begin
         {100} wbFloat('Saturation'),
         wbStruct('Contrast', [
           {104} wbFloat('Avg Lum Value'),
-          {108} wbFloat('Value')
-        ]),
-        {112} wbFloat('Cinematic - Brightness - Value'),
+          {108} tic - Brightness - Value'),
         wbStruct('Tint', [
           wbStruct('Color', [
             {116} wbFloat('Red', cpNormal, False, 255, 0),
@@ -9054,10 +9052,9 @@ begin
     ], cpNormal, True, nil, 5)
   ]);
 
-  wbRecord(IMAD, 'Image Space Adapter', [
-    wbEDID,
-    wbStruct(DNAM, 'Data', [
-      wbInteger('Flags', itU32, wbFlags(['Animatable'])),
+  wbRec2',
+        {0x00001000}'Blur Radius Bit 1',
+        {0x00002000}'Blur Radius Bit 0wbInteger('Flags', itU32, wbFlags(['Animatable'])),
       wbFloat('Duration'),
       //wbArray('Unknown', wbByteArray('Unknown', 4), 48),
       wbByteArray('Unknown', 4*48),
@@ -9769,14 +9766,21 @@ begin
       ]),
       {28} wbFloat('Max Time'),
       {32} wbFloat('Min Time'),
-      {36} wbFloat('Target % Between Actors'),
-      {40} wbFloat('Near Target Distance')
-    ], cpNormal, True, nil),
-    wbFormIDCk(MNAM, 'Image Space Modifier', [IMAD])
-  ]);
-
-  wbRecord(CPTH, 'Camera Path', [
+      {36} wbFloat('Taraterial Type', [
     wbEDIDReq,
+    wbFormIDCk(PNAM, 'Material Parent', [MATT, NULL]),
+    wbString(MNAM, 'Material Name'),
+    wbStruct(CNAM, 'Havok Display Color', [
+      wbFloat('Red', cpNormal, True, 255, 0),
+      wbFloat('Green', cpNormal, True, 255, 0),
+      wbFloat('Blue', cpNormal, True, 255, 0)
+    ]),
+    wbFloat(BNAM, 'Buoyancy'),
+    wbInteger(FNAM, 'Flags', itU32, wbFlags([
+      'Stair Material',
+      'Arrows Stick'
+    ], False)),
+    wbFormIDCk(HNAM, 'Havok Impact Data Set', [IPDS, NULL] wbEDIDReq,
     wbCTDAs,
     wbArray(ANAM, 'Related Camera Paths', wbFormIDCk('Related Camera Path', [CPTH, NULL]), ['Parent', 'Previous Sibling'], cpNormal, True),
     wbInteger(DATA, 'Camera Zoom', itU8, wbEnum([], [
@@ -9833,19 +9837,45 @@ begin
     wbFormIDCk(NAM2, 'Unknown', [HAZD, NULL])
   ]);
 
-  wbRecord(IPDS, 'Impact DataSet', [
+ocation', [
     wbEDIDReq,
-    wbStruct(DATA, 'Impacts', [
-      wbFormIDCk('Stone', [IPCT, NULL]),
-      wbFormIDCk('Dirt', [IPCT, NULL]),
-      wbFormIDCk('Grass', [IPCT, NULL]),
-      wbFormIDCk('Glass', [IPCT, NULL]),
-      wbFormIDCk('Metal', [IPCT, NULL]),
-      wbFormIDCk('Wood', [IPCT, NULL]),
-      wbFormIDCk('Organic', [IPCT, NULL]),
-      wbFormIDCk('Cloth', [IPCT, NULL]),
-      wbFormIDCk('Water', [IPCT, NULL]),
-      wbFormIDCk('Hollow Metal', [IPCT, NULL]),
+    wbArray(LCPR, 'Actors', wbStruct('', [
+      wbFormIDCk('Actor', [ACHR]),
+      wbFormIDCk('Location', [WRLD, CELL]),
+      wbByteArray('Unknown', 4)
+    ])),
+    wbArray(LCUN, 'Unique Refs', wbStruct('', [
+      wbFormIDCk('Actor', [NPC_]),
+      wbFormIDCk('Ref', [ACHR]),
+      wbFormIDCk('Location', [LCTN])
+    ])),
+    wbArray(LCSR, 'Location Ref Types', wbStruct('', [
+      wbFormIDCk('Loc Ref Type', [LCRT]),
+      wbFormIDCk('Marker', [REFR, ACHR]),
+      wbFormIDCk('Location', [WRLD, CELL]),
+      wbByteArray('Unknown', 4)
+    ])),
+    wbRArray('Unknown',
+      wbStruct(LCEC, 'Unknown', [
+        wbFormIDCk('Location', [WRLD, CELL]),
+        wbArray('Unknown', wbByteArray('Unknown', 4))
+      ])
+    ),
+    wbArray(LCID, 'Unknown', wbFormIDCk('Ref', [ACHR, REFR])),
+    wbArray(LCEP, 'Unknown', wbStruct('', [
+      wbFormIDCk('Actor', [ACHR]),
+      wbFormIDCk('Ref', [REFR]),
+      wbByteArray('Unknown', 4)
+    ])),
+    wbFull,
+    wbKeywords,
+    wbFormIDCk(PNAM, 'Parent Location', [LCTN, NULL]),
+    wbFormIDCk(NAM1, 'Music', [MUSC, NULL]),
+    wbFormIDCk(FNAM, 'Unreported Crime Faction', [FACT]),
+    wbFormIDCk(MNAM, 'World Location Marker Ref', [REFR]),
+    wbFloat(RNAM, 'World Location Radius'),
+    wbFormIDCk(NAM0, 'Horse Marker Ref', [REFR]),
+    wbCNAM'Hollow Metal', [IPCT, NULL]),
       wbFormIDCk('Organic Bug', [IPCT, NULL]),
       wbFormIDCk('Organic Glow', [IPCT, NULL])
     ], cpNormal, True, nil, 9),
@@ -9962,9 +9992,12 @@ begin
            {56} wbInteger('Melee', itS32, wbDiv(1000))
          ])
     ], cpNormal, True),
-    wbArray(RAFB, 'Feedback Dynamic Bones', wbInteger('Bone', itU16), 0, nil, nil, cpNormal, True),
-    wbStruct(RAPS, 'Pose Matching Data', [
-    {00} wbArray('Match Bones', wbInteger('Bone', itU16, wbHideFFFF), 3),
+    wbArray(RAFB, 'Feedback Dynamic Bones', wbInteger Nea, 'Texture lightning', [
+      wbFloat('Red'),
+      wbFloat('Green'),
+      wbFloat('Blue')
+    ]),
+    wbStruct(nes', wbInteger('Bone', itU16, wbHideFFFF), 3),
     {06} wbInteger('Flags', itU8, wbFlags([
            'Disable On Move'
          ])),
@@ -9972,8 +10005,41 @@ begin
     {08} wbFloat('Motors Strength'),
     {12} wbFloat('Pose Activation Delay Time'),
     {16} wbFloat('Match Error Allowance'),
-    {20} wbFloat('Displacement To Disable')
-    ], cpNormal, True),
+    {20} wbFlo32),
+      wbStruct('Fog Color Fa, 'Texture lightning', [
+      wbFloat('Red'),
+      wbFloat('Green'),
+      wbFloat('Blue')
+    ]),
+    wbStruct(ByteArray('Unknown', 1)
+      ]),
+      wbFloat('Fog Max'),
+      wbStruct('Light Fade Distances', [
+        wbFloat('Start'),
+        wbFloat('End')
+      ]),
+      wbByteArray('Unknown', 4)
+    ], cpNormal, True, nil, 11),
+    wbStruct(DALC, 'Directional Ambient Values', [
+      wbArray('Colors',
+        wbStruct('Color', [
+          wbInteger('Red', itU8),
+          wbInteger('Green', itU8),
+          wbInteger('Blue', itU8),
+          wbByteArray('Unknown', 1)
+        ]),
+        ['X+', 'X-', 'Y+', 'Y-', 'Z+', 'Z-']
+      ),
+      wbStruct('Specular (unused)', [
+        wbStruct('Color', [
+          wbInteger('Red', itU8),
+          wbInteger('Green', itU8),
+          wbInteger('Blue', itU8),
+          wbByteArray('Unknown', 1)
+        ]),
+        wbFloat('Fresnel Power')
+      ], cpNormal, True, nil, 1)
+    ] True),
     wbString(ANAM, 'Death Pose')
   ]);
 
@@ -10246,25 +10312,36 @@ begin
          wbUnknown(SCHR),
          wbUnknown(QNAM)
         ], []),
-        wbRArray('Array PNAM followed by DATA - DEVA', wbRStruct('Unknown', [
+        wrt objectrray('Array PNAM followed by DATA - DEVA', wbRStruct('Unknown', [
           wbUnknown(PNAM)
         ], [])),
         wbUnknown(DATA),
         wbUnknown(HTID),
         wbUnknown(DMAX),
-        wbUnknown(DMIN),
-        wbUnknown(DEMO),
-        wbUnknown(DEVA),
-        wbByteArray(ANAM, 'ANAM End Marker')
-      ], [])),
-    wbRStruct('Final SCHR SCTX QNAM Only', [
-      wbUnknown(SCHR),
-      wbUnknown(SCDA),
-      wbUnknown(SCTX),
-      wbUnknown(QNAM),
-      wbSCROs
-    ], []),
-    wbRStruct('Final NEXT SCHR SCTX QNAM', [
+         wbRecord(MATO, 'Material Object', [
+    wbEDIDReq,
+    wbMODL,
+    wbRArray('Property Data',
+      wbByteArray(DNAM, 'Data', 0, cpIgnore, False, False, wbNeverShow)
+    ),
+    wbStruct(DATA, 'Directional Material Data', [
+      wbFloat('Falloff Scale'),
+      wbFloat('Falloff Bias'),
+      wbFloat('Noise UV Scale'),
+      wbFloat('Material UV Scale'),
+      wbStruct('Projection Vector', [
+        wbFloat('X'),
+        wbFloat('Y'),
+        wbFloat('Z')
+      ]),
+      wbFloat('Normal Dampener'),
+      wbStruct('Single Pass Color', [
+        wbFloat('Red', cpNormal, True, 255, 0),
+        wbFloat('Green', cpNormal, True, 255, 0),
+        wbFloat('Blue', cpNormal, True, 255, 0)
+      ]),
+      wbInteger('Flags', itU32, wbFlags(['Single Pass']))
+    ], cpNormal, True, nil, 5CTX QNAM', [
       wbEmpty(NEXT, 'NEXT Marker'),
         wbUnknown(SCHR),
         wbUnknown(SCDA),
@@ -10805,9 +10882,10 @@ begin
         wbArray('Rows', wbStruct('Row', [
           wbArray('Columns', wbInteger('Column', itU8), 33)
         ]), 33),
-        wbByteArray('Unknown', 3)
-      ]),
-      wbArray(VCLR, 'Vertex Colours', wbStruct('Row', [
+        wbByteArray('Unknown', 3VMAD,
+    wbOBNDReq,
+    wbMODL,
+    wbDEST 'Vertex Colours', wbStruct('Row', [
         wbArray('Columns', wbStruct('Column', [
           wbInteger('X', itU8),
           wbInteger('Y', itU8),
@@ -10826,17 +10904,24 @@ begin
         ], []),
         wbRStructSK([0],'Alpha Layer', [
           wbStructSK(ATXT, [1, 3], 'Alpha Layer Header', [
-            wbFormIDCk('Texture', [LTEX, NULL]),
-            wbInteger('Quadrant', itU8, wbQuadrantEnum),
-            wbByteArray('Unknown', 1),
-            wbInteger('Layer', itS16)
-          ]),
-          wbArrayS(VTXT, 'Alpha Layer Data', wbStructSK([0], 'Cell', [
-            wbInteger('Position', itU16, wbAtxtPosition),
+            wbFormIDCk('Texture'hadow Spotlight',
+        {0x00000800} 'Shadow Hemisphere',
+        {0x00001000} 'Shadow Omnidirectional',
+        {0x00002000} 'Portal-strict'
+      ])),
+      wbFloat('Falloff Exponent'),
+      wbFloat('FOV'),
+      wbFloat('Near Clip'),
+      wbStruct('Flicker Effect', [
+        wbFloat('Period', cpNormal, False, 0.01),
+        wbFloat('Intensity Amplitude'),
+        wbFloat('Movement Amplitude')
+      ]),
+      wbInteger('Value', itU32),
+      wbFloat('Weight'itU16, wbAtxtPosition),
             wbByteArray('Unknown', 2),
             wbFloat('Opacity')
-          ]))
-        ], [])
+          ]))NDR       ], [])
       ], [])),
 
       wbArray(VTEX, 'Textures', wbFormIDCk('Texture', [LTEX, NULL]))
@@ -10848,72 +10933,33 @@ begin
     wbEDIDReq,
     wbOBNDReq,
     wbMODL,
-    wbSCRI,
-    wbFULL,
-    wbICON,
-    wbStruct(DATA, '', [
-      wbInteger('Time', itS32),
-      wbInteger('Radius', itU32),
-      wbStruct('Color', [
-        wbInteger('Red', itU8),
-        wbInteger('Green', itU8),
-        wbInteger('Blue', itU8),
-        wbInteger('Unknown', itU8)
-      ]),
-      wbInteger('Flags', itU32, wbFlags([
-        {0x00000001} 'Dynamic',
-        {0x00000002} 'Can be Carried',
-        {0x00000004} 'Negative',
-        {0x00000008} 'Flicker',
-        {0x00000010} 'Unknown',
-        {0x00000020} 'Off By Default',
-        {0x00000040} 'Flicker Slow',
-        {0x00000080} 'Pulse',
-        {0x00000100} 'Pulse Slow',
-        {0x00000200} 'Spot Light',
-        {0x00000400} 'Spot Shadow'
+ FormIDCk(NNAM, 'Loading Screen NIF', [STAT, NULL], False, cpNormal, True),
+    wbFloat(SNAM, 'Initial Scale'),
+    wbStruct(RNAM, 'Initial Rotation', [
+      wbInteger('X', itS16),
+      wbInteger('Y', itS16),
+      wbInteger('Z', itS16)
+    ]),
+    wbStruct(ONAM, 'Rotation Offset Constraints', [
+      wbInteger('Min', itS16),
+      wbInteger('Max', itS16)
+    ]),
+    wbStruct(XNAM, 'Initial Translation Offset', [
+      wbFloat('X'),
+      wbFloat('Y'),
+      wbFloat('Z')
+    ]),
+    wbString(MOD2, 'Camera Pathdow'
       ])),
       wbFloat('Falloff Exponent'),
       wbFloat('FOV'),
       wbInteger('Value', itU32),
       wbFloat('Weight'),
-      wbByteArray('Unknown', 4),
-      wbByteArray('Unknown', 4),
-      wbByteArray('Unknown', 4),
-      wbByteArray('Unknown', 4)
+      wbByteArray('Unknown', 4),FormIDCk(TNAM, 'Texture Set', [TXST], False, cpNormal, True),
+    wbFormIDCk(MNAM, 'Material Typ)
     ], cpNormal, True),
     wbFloat(FNAM, 'Fade value', cpNormal, True),
-    wbFormIDCk(SNAM, 'Sound', [SOUN])
-  ], False, nil, cpNormal, False, wbLIGHAfterLoad);
-end;
-
-procedure DefineTES5m;
-begin
-  wbRecord(LSCR, 'Load Screen', [
-    wbEDIDReq,
-    wbICONReq,
-    wbDESCReq,
-    wbCTDAs,
-    wbUnknown(NNAM),
-//    wbFormIDCk(NNAM, 'File Name', [STAT, NULL], False, cpNormal, True),
-    wbUnknown(SNAM),
-    wbUnknown(RNAM),
-    wbUnknown(ONAM),
-    wbUnknown(XNAM),
-//    wbRArrayS('Unknown XYZ Location', wbStructSK(XNAM, [0, 1], 'Location', [
-//      wbByteArray('Unknown', 2),
-//      wbFormIDCk('World', [CELL, WRLD, NULL]),
-//      wbByteArray('Unknown', 2),
-//      wbByteArray('Unknown', 2),
-//      wbByteArray('Unknown', 2)
-//      wbStructSK([0, 1], 'Indirect', [
-//        wbFormIDCk('World', [NULL, WRLD]),
-//        wbStructSK([0,1], 'Grid', [
-//          wbInteger('Y', itS16),
-//          wbInteger('X', itS16)
-//        ])
-//      ])
-//    ], cpNormal, True)),
+    wbFormIDCk(SNA], cpNormal, True)),
     wbString(MOD2, 'Camera File', 0, cpNormal, True),
     wbFormIDCk(WMI1, 'Load Screen Type', [LSCT], False, cpNormal, True)
   ]);
@@ -10921,41 +10967,7 @@ begin
   wbRecord(LTEX, 'Landscape Texture', [
     wbEDIDReq,
     wbICON,
-    wbFormIDCk(TNAM, 'Texture', [TXST], False, cpNormal, True),
-    wbFormIDCk(MNAM, 'Texture', [MATT, NULL], False, cpNormal, True),
-    wbStruct(HNAM, 'Havok Data', [
-      wbInteger('Material Type', itU8, wbEnum([
-        {00} 'STONE',
-        {01} 'CLOTH',
-        {02} 'DIRT',
-        {03} 'GLASS',
-        {04} 'GRASS',
-        {05} 'METAL',
-        {06} 'ORGANIC',
-        {07} 'SKIN',
-        {08} 'WATER',
-        {09} 'WOOD',
-        {10} 'HEAVY STONE',
-        {11} 'HEAVY METAL',
-        {12} 'HEAVY WOOD',
-        {13} 'CHAIN',
-        {14} 'SNOW',
-        {15} 'ELEVATOR',
-        {16} 'HOLLOW METAL',
-        {17} 'SHEET METAL',
-        {18} 'SAND',
-        {19} 'BRIKEN CONCRETE',
-        {20} 'VEHILCE BODY',
-        {21} 'VEHILCE PART SOLID',
-        {22} 'VEHILCE PART HOLLOW',
-        {23} 'BARREL',
-        {24} 'BOTTLE',
-        {25} 'SODA CAN',
-        {26} 'PISTOL',
-        {27} 'RIFLE',
-        {28} 'SHOPPING CART',
-        {29} 'LUNCHBOX',
-        {30} 'BABY RATTLE',
+  {30} 'BABY RATTLE',
         {31} 'RUBER BALL'
       ])),
       wbInteger('Friction', itU8),
@@ -10973,12 +10985,7 @@ begin
 //    wbOBNDReq,
 //    wbInteger(LVLD, 'Chance none', itU8, nil, cpNormal, True),
 //    wbInteger(LVLF, 'Flags', itU8, wbFlags([
-//      {0x01} 'Calculate from all levels <= player''s level',
-//      {0x02} 'Calculate for each item in count'
-//    ]), cpNormal, True),
-//    wbRArrayS('Leveled List Entries',
-//      wbRStructExSK([0], [1], 'Leveled List Entry', [
-//        wbStructExSK(LVLO , [0, 2], [3], 'Base Data', [
+//  [3], 'Base Data', [
 //          wbInteger('Level', itS16),
 //          wbByteArray('Unused', 2),
 //          wbFormIDCk('Reference', [CREA, LVLC]),
@@ -11001,70 +11008,26 @@ begin
     ]), cpNormal, True),
     wbLLCT,
     wbRArrayS('Leveled List Entries',
-      wbRStructExSK([0], [1], 'Leveled List Entry', [
-        wbStructExSK(LVLO , [0, 2], [3], 'Base Data', [
+  APPA, MISC, WEAP, BOOK, LVLI, KEYM, ALCH, LIGHtructExSK(LVLO , [0, 2], [3], 'Base Data', [
           wbInteger('Level', itS16),
           wbByteArray('Unknown', 2),
-          wbFormIDCk('Reference', [NPC_, LVLN]),
-          wbInteger('Count', itS16),
-          wbByteArray('Unknown', 2)
-        ]),
-				wbCOED
-      ], []),
-    cpNormal, True),
-    wbMODL
-  ]);
-
-//----------------------------------------------------------------------------------
-// Begin New LVLI----------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------
-
-  wbRecord(LVLI, 'Leveled Item', [
-    wbEDIDReq,
-    wbOBNDReq,
-    wbLVLD,
-    wbInteger(LVLF, 'Flags', itU8, wbFlags([
-      {0x01} 'Calculate from all levels <= player''s level',
-      {0x02} 'Calculate for each item in count',
-      {0x04} 'Use All',
-      {0x08} 'Special Loot'
-    ]), cpNormal, True),
-    wbFormIDCk(LVLG, 'Global', [GLOB]),
-    wbLLCT,
-    wbRArrayS('Leveled List Entries',
-      wbRStructExSK([0], [1], 'Leveled List Entry', [
-        wbStructExSK(LVLO , [0, 2], [3], 'Base Data', [
-          wbInteger('Level', itS16),
-          wbByteArray('Unknown', 2),
-          wbFormIDCk('Reference', [ARMO, AMMO, MISC, WEAP, BOOK, LVLI, KEYM, ALCH, NOTE, IMOD, CMNY, CCRD, CHIP]),
-          wbInteger('Count', itS16),
-          wbByteArray('Unknown', 2)
-        ]),
-        wbCOED
-      ], [])
-    )
-  ]);
-
-//----------------------------------------------------------------------------------
-// End New LVLI
-//
-// Begin Old LVLI
-//----------------------------------------------------------------------------------
+          wbFormI--------------------------------------
 //   wbRecord(LVLI, 'Leveled Item', [
 //    wbEDIDReq,
 //    wbOBNDReq,
 //    wbInteger(LVLD, 'Chance none', itU8, nil, cpNormal, True),
 //    wbInteger(LVLF, 'Flags', itU8, wbFlags([
-//      {0x01} 'Calculate from all levels <= player''s level',
-//      {0x02} 'Calculate for each item in count',
-//      {0x04} 'Use All'
-//    ]), cpNormal, True),
+//      {,
+    wbRArrayS('Grasses', wbFormIDCk(GNAM, 'Grass', [GRAS]))
+  ]);
+
+//--------------------SK([0], 'Leveledue),
 //    wbFormIDCk(LVLG, 'Global', [GLOB]),
 //    wbRArrayS('Leveled List Entries',
 //      wbRStructExSK([0], [1], 'Leveled List Entry', [
 //        wbStructExSK(LVLO , [0, 2], [3], 'Base Data', [
 //          wbInteger('Level', itS16),
-//          wbByteArray('Unused', 2),
+//          wbByteArr 2),
 //         wbFormIDCk('Reference', [ARMO, AMMO, MISC, WEAP, BOOK, LVLI, KEYM, ALCH, NOTE, IMOD, CMNY, CCRD, CHIP]),
 //          wbInteger('Count', itS16),
 //          wbByteArray('Unused', 2)
@@ -11963,8 +11926,9 @@ begin
       {6} wbFormIDCk('Keyword', [KYWD]),
       {7} wbByteArray('Unknown', 4, cpIgnore),
       {8} wbByteArray('Alias ID', 4),
-      {9} wbFormIDCkNoReach('Reference', [REFR, PGRE, PMIS, ACHR, ACRE, PLYR], True),
-     {10} wbByteArray('Unknown', 4, cpIgnore),
+      {90x00008000}'Unknown 16',
+      {0x00010000}'Unknown 17',
+      {0x00020000}'Unknow{10} wbByteArray('Unknown', 4, cpIgnore),
      {11} wbByteArray('Unknown', 4, cpIgnore),
      {12} wbByteArray('Unknown', 4, cpIgnore)
     ]),
