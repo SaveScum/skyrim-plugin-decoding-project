@@ -12690,9 +12690,7 @@ rmIDCk(NAM7, 'Decapitation FX', [ARTO, NULL]),
       wbByteArray('Unknown', 4),
       wbByteArray('Unknown', 4),
       wbByteArray('Unknown', 4),
-      wbByteArray('Unknown', 4),
-      wbBy ATTR', 0, cpNormal),
-      wbByteArray('Unknown', 4),
+      wbByteArray('UwbByteArray('Unknown', 4),
       wbByteArray('Unknown', 4),
       wbByteArray('Unknown', 4),
       wbByteArray('Unknown', 4),
@@ -12730,7 +12728,19 @@ rmIDCk(NAM7, 'Decapitation FX', [ARTO, NULL]),
           wbInteger(INDX, 'Index', itU32, wbBodyPartIndexEnu{>>> When NAME is user defined wbBipedObjectEnum will be incorrect <<<}
     wbRArrayS('Biped Object Names', wbString(NAME, 'Name', cpNormal, True),Movement Types', wbRStruct('Movement Types', [
       wbFormIDCk(MTYP, 'Movement Type', [MOVT, NULL]),
-      wbByteArray(SPED, 'Unknown', 0('Parts', wbRStructSK([0], 'Part', [
+      wbStruct(SPED, 'Override Values', [
+        wbFloat('Left - Walk'),
+        wbFloat('Left - Run'),
+        wbFloat('Right - Walk'),
+        wbFloat('Right - Run'),
+        wbFloat('Forward - Walk'),
+        wbFloat('Forward - Run'),
+        wbFloat('Back - Walk'),
+        wbFloat('Back - Run'),
+        wbFloat('Rotate - Walk'),
+        wbFloat('Rotate - Walk'),
+        wbFloat('Unknown')
+      ]('Parts', wbRStructSK([0], 'Part', [
           wbInteger(INDX, 'Index', itU32, wbBodyParS('Equip Slots', wbFormIDCk(QNAM, 'Equip Slot', [EQUP, NULL])),
     wbFormIDCk(UNES, 'Unarmed Equip Slot', [EQUP, NULL]),
     wbRArrayS('Phoneme Target Names', wbString(PHTN, 'Name')),
