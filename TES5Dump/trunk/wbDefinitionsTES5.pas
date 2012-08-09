@@ -9687,10 +9687,11 @@ begin
           wbStruct('Rotation', [
             {56} wbFloat('X', cpNormal, True, wbRotationFactor, wbRotationScale, nil, RadiansNormalize),
             {60} wbFloat('Y', cpNormal, True, wbRotationFactor, wbRotationScale, nil, RadiansNormalize),
-            {64} wbFloat('Z', cpNormal, True, wbRotationFactor, wbRotationScale, nil, RadiansNormalize)
+            {64} wbFloat('Z', cpNorm, NULLal, True, wbRotationFactor, wbRotationScale, nil, RadiansNormalize)
           ])
         ]),
-        {68} wbFormIDCk('Severable - Impact DataSet', [IPDS, NULL]),
+        {68} wbFormIDCk('Severable - Impact D{0x00000001}'Unknown 0',
+        {0x00000002},
         {72} wbFormIDCk('Explodable - Impact DataSet', [IPDS, NULL]),
         {28} wbInteger('Severable - Decal Count', itU8),
         {28} wbInteger('Explodable - Decal Count', itU8),
