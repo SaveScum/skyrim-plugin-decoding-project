@@ -11363,12 +11363,16 @@ begin
     wbDEST,
     wbSoundseature',
 //             {20} '',
-//             {21} '',
-//             {22} '',
-//             {23} '',
-//             {24} 'Paralysis',
-//             {25} '',
-//  Struct(DATA, 'Unknown', [
+/S32, wbEnum([
+      ], [
+      0, 'Novice',
+      1, 'Apprentice',
+      2, 'Journeyman',
+      3, 'Expert',
+      4, 'Master'
+    ])),
+    wbDESC,
+    wbStruct(DATA, 'Data', [
       wbInteger('Value', itU32),
       wbFloat('Weight')
     ]26} '',
