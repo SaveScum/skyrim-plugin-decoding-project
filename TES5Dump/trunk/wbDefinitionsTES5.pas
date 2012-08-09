@@ -5334,9 +5334,7 @@ begin
     wbStruct(DEST, 'Header', [
       wbInteger('Health', itS32),
       wbInteger('DEST Count', itU8),
-      wbInteger('Flags', itU8, wbFlags([
-        'VATS Targetable'
-      ], True)),
+      wbInteger('VATS Targetable', itU8, wbEnum(['False', 'True'])),
       wbByteArray('Unknown', 2)
     ]),
     wbRArray('Stages',  // Begin Stage Array
@@ -5370,9 +5368,7 @@ begin
     wbStruct(DEST, 'Header', [
       wbInteger('Health', itS32),
       wbInteger('Count', itU8),
-      wbInteger('Flags', itU8, wbFlags([
-        'VATS Targetable'
-      ])),
+      wbInteger('VATS Targetable', itU8, wbEnum(['False', 'True'])),
       wbByteArray('Unknown', 2)
     ]),
     wbRArray('Stages',  // Begin Stage Array
@@ -11324,14 +11320,23 @@ begin
 //             {16} 'Lock',
 //             {17} 'Open',
 //             {18} 'Bound Item',
-//             {19} 'Summon Creature',
+//        VMAD,
+    wbOBNDReq,
+    wbFULL,
+    wbMODL,
+    wbICON,
+    wbDEST,
+    wbSoundseature',
 //             {20} '',
 //             {21} '',
 //             {22} '',
 //             {23} '',
 //             {24} 'Paralysis',
 //             {25} '',
-//             {26} '',
+//  Struct(DATA, 'Unknown', [
+      wbInteger('Value', itU32),
+      wbFloat('Weight')
+    ]26} '',
 //             {27} '',
 //             {28} '',
 //             {29} '',
