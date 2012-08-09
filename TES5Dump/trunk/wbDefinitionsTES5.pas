@@ -12619,8 +12619,7 @@ rmIDCk(NAM7, 'Decapitation FX', [ARTO, NULL]),
   wbRecord(RACE, 'Race', [
     wbEDIDReq,
     wbFULLReq,
-    wbUnknown(DESC),
-//    wbDESCReq,
+    wbDESCReq,
     wbSpellay('Unknown', 4),
         wbByteArray('Unknown', 4)
       ]),
