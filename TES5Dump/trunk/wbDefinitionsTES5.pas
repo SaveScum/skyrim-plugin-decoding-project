@@ -114,9 +114,12 @@ const
   AACT : TwbSignature = 'AACT';
   ACBS : TwbSignature = 'ACBS';
   ACHR : TwbSignature = 'ACHR';
+  ACID : TwbSignature = 'ACID'; { New To Dawnguard }
   ACPR : TwbSignature = 'ACPR'; { New To Skyrim }
   ACRE : TwbSignature = 'ACRE';
+  ACSR : TwbSignature = 'ACSR'; { New To Dawnguard }
   ACTI : TwbSignature = 'ACTI';
+  ACUN : TwbSignature = 'ACUN'; { New To Dawnguard }
   ADDN : TwbSignature = 'ADDN';
   AHCF : TwbSignature = 'AHCF'; { New To Skyrim }
   AHCM : TwbSignature = 'AHCM'; { New To Skyrim }
@@ -449,6 +452,7 @@ const
   NVMI : TwbSignature = 'NVMI';
   NVNM : TwbSignature = 'NVNM'; { New to Skyrim }
   NVPP : TwbSignature = 'NVPP'; { New to Skyrim }
+  NVSI : TwbSignature = 'NVSI'; { New to Dawnguard }
   NVTR : TwbSignature = 'NVTR';
   NVVX : TwbSignature = 'NVVX';
   OBND : TwbSignature = 'OBND';
@@ -666,6 +670,7 @@ const
   XAPD : TwbSignature = 'XAPD';
   XAPR : TwbSignature = 'XAPR';
   XATO : TwbSignature = 'XATO';
+  XATR : TwbSignature = 'XATR'; { New To Dawnguard }
   XCAS : TwbSignature = 'XCAS';
   XCCM : TwbSignature = 'XCCM';
   XCET : TwbSignature = 'XCET';
@@ -8770,7 +8775,8 @@ begin
         wbArray('Unknown', wbFormIDCk('Unknown', [NAVM]), -1),
         wbArray('Doors', wbFormIDCk('Door', [REFR]), -1),
         wbByteArray('Unknown')
-      ])
+  ,
+		wbByteArray(NVSI, 'Unknown'     ])
     )
   ]);
 
@@ -9196,9 +9202,8 @@ begin
       wbArray('Unknown', wbByteArray('Unknown', 4), 3),
       wbInteger('DoF Flags', itU32, wbFlags([
         {0x00000001}'Use Target',
-        {0x00000002}'Unknown 2',
-        {0x00000004}'Unknown 3',
-        {0x000
+      cpNormal, True, 255, 0),
+          wbFloat('Blue', cpNormal, True, 255, 0),
           wbFloat('Alpha', cpNormal, True, 255, 0)
         ]),
         wbUnknown
@@ -9978,16 +9983,19 @@ begin
 
 ocation', [
     wbEDIDReq,
+    wbUnknown(ACPR),
     wbArray(LCPR, 'Actors', wbStruct('', [
       wbFormIDCk('Actor', [ACHR]),
       wbFormIDCk('Location', [WRLD, CELL]),
       wbByteArray('Unknown', 4)
     ])),
+    wbUnknown(ACUN),
     wbArray(LCUN, 'Unique Refs', wbStruct('', [
       wbFormIDCk('Actor', [NPC_]),
       wbFormIDCk('Ref', [ACHR]),
       wbFormIDCk('Location', [LCTN])
     ])),
+    wbUnknown(ACSR),
     wbArray(LCSR, 'Location Ref Types', wbStruct('', [
       wbFormIDCk('Loc Ref Type', [LCRT]),
       wbFormIDCk('Marker', [REFR, ACHR]),
@@ -10000,6 +10008,7 @@ ocation', [
         wbArray('Unknown', wbByteArray('Unknown', 4))
       ])
     ),
+    wbArray(ACID, 'Unknown', wbFormIDCk('Ref', [ACHR, REFR])),
     wbArray(LCID, 'Unknown', wbFormIDCk('Ref', [ACHR, REFR])),
     wbArray(LCEP, 'Unknown', wbStruct('', [
       wbFormIDCk('Actor', [ACHR]),
@@ -10834,6 +10843,8 @@ begin
       ]),
       wbInteger('Flags', itU8, wbFlags([
         {0x01} 'Parent',
+    Unknown(DNAM),
+    wbUnknown(TRDTnt',
         {0x02} 'Sequence',
         {0x04} 'No Attacking',
         {0x04} 'Blocking'
@@ -11539,6 +11550,8 @@ begin
         {0x0001} 'Use Traits',
         {0x0002} 'Use Stats',
         {0x0004} 'Use Factions',
+        {ByteArray(PNAM, 'Unknown', 4),
+    wbByteArray(UNAM, 'Unknown', 4
         {0x0008} 'Use Spell List',
         {0x0010} 'Use AI Data',
         {0x0020} 'Use AI Packages',
@@ -11972,17 +11985,15 @@ begin
       {0x00000020}'Friendly fire comments',
       {0x00000040}'Aggro Radius Behavior',
       {0x00000080}'Allow Idle Chatter',
-      {0x00000100}'Unknown 9',
-      {0x00000200}'World Interactions',
-      {0x00000400}'Unknown 11',
-      {0x00000800}'Unknown 12',
-      {0x00001000}'Unknown 13',
-      {0x00002000}'Unknown 14',
-      {0x00004000}'Unknown 15',
-      {0x00008000}'Unknown 16',
-      {0x00010000}'Unknown 17',
-      {0x00020000}'Unknown 18',
-      {0x00040000}'Unknown 19',
+      {0x00000100}'Un
+    wbInteger('Duration (minutes)', itS32)
+  ], cpNormal, True);
+
+  wbPLDT := wbStruct(PLDT, 'Location', [
+    wbInteger('Type', itS32, wbLocationEnum),
+    wbUnion('Location Value', wbPxDTLocationDecider, [
+      {0} wbFormIDCkNoReach('Reference', [REFR, PGRE, PMIS, ACHR, ACRE, PLYR], True),
+      {1} wbFormIDCkNoReach('Cell', [CELL]),
       {2} wbByteArray('Unknown', 4, cpIgnore),
       {3} wbByteArray('Unknown', 4, cpIgnore),
       {4} wbFormIDCkNoReach('Object ID', [ACTI, DOOR, STAT, FURN, CREA, SPEL, NPC_, CONT, ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, LIGH, CHIP]),
@@ -12140,7 +12151,7 @@ begin
     wbUNAMs,
     wbRStruct('OnBegin', [
       wbEmpty(POBA, 'OnBegin Marker', cpNormal, True),
-      wbINAM,
+      wNAM,
       wbUnknown(SCHR),
       wbUnknown(SCTX),
       wbUnknown(QNAM),
@@ -12209,20 +12220,15 @@ begin
       wbRArray('Log Entries', wbRStruct('Log Entry', [
         wbInteger(QSDT, 'Stage Flags', itU8, wbFlags([
           {0x01} 'Complete Quest',
-          {0x02} 'Fail Quest'
-        ])),
-        wbCTDAs,
-        wbLString(CNAM, 'Log Entry'),
-        wbEmbeddedScriptReq,
-        wbFormIDCk(NAM0, 'Next Quest', [QUST]),
-        wbUnknown(SCHR),
-        wbUnknown(QNAM),
-        wbUnknown(SCTX)
-        // CTDAs was here
-      ], []))
-    ], [])),
-    wbRArray('Objectives', wbRStruct('Objective', [
-      wbInteger(QOBJ, 'Objective Index', itU16),
+          {0Unknown(ALCO),
+          wbUnknown(ALCA),
+          wbUnknown(ALCL),
+          wbCTDAs,
+          wbUnknown(ALFA),
+          wbUnknown(ALRT),
+          wbKeywords,
+          {>>> When there is no COCT, CNTO comes right after Keywords and produces an error <<<}
+          {>>> Error: record QUST contains unexpected (or out of order) subrecord CNTO 4F544E43  <<<}      wbInteger(QOBJ, 'Objective Index', itU16),
       wbUnknown(FNAM),
       wbLString(NNAM, 'Description', 0, cpNormal, True),
       wbRArray('Targets', wbRStruct('Target', [
@@ -13152,7 +13158,8 @@ rmIDCk(NAM7, 'Decapitation FX', [ARTO, NULL]),
       wbFloat(XPRD, 'Idle Time', cpNormal, True),
       wbEmpty(XPPA, 'Patrol Script Marker', cpNormal, True),
       wbFormIDCk(INAM, 'Idle', [IDLE, NULL], False, cpNormal, True),
-      wbStruct(SCHR, 'Unknown', [
+      wbStruct(SCHR,{--- Unknown ---}
+    wbUnknown(XATRruct(SCHR, 'Unknown', [
         wbByteArray('Unknown', 4),
         wbByteArray('Unknown', 4),
         wbByteArray('Unknown', 4),
@@ -14224,7 +14231,8 @@ begin
 
    wbStruct(CRDT, 'Critical Data', [
       {00} wbInteger('Critical Damage', itU16),
-      {09} wbByteArray('Unknown', 2),
+      {09} wbByteArray(' Pattern 4: EDID Multi-RNAM,
+// Dawnguard  FULL WCTR LTMP XEZN XLCN WNAM PNAM NAM2 NAM3 NAM4 DNAM ONAM NAMA DATA NAM0 NAM9 ZNAM XWEyteArray('Unknown', 2),
       {04} wbFloat('Crit % Mult'),
       {08} wbInteger('Flags', itU8, wbFlags([
         'On Death'
@@ -14331,6 +14339,7 @@ begin
     ], cpNormal, True),
     wbFormIDCk(INAM, 'Image Space', [IMGS]),
     wbFloat(NAMA, 'Unknown'),
+Unknown(XWEnknown'),
     wbInteger(DATA, 'Flags', itU8, wbFlags([
       {0x01} 'Small World',
       {0x02} 'Can''t Fast Travel',
@@ -14999,34 +15008,42 @@ begin
    wbAddGroupOrder(IDLM);
    wbAddGroupOrder(COBJ);
    wbAddGroupOrder(PROJ);
-   wbAddGroupOrder(HAZD);
-   wbAddGroupOrder(SLGM);
-   wbAddGroupOrder(LVLI);
-   wbAddGroupOrder(WTHR);
-   wbAddGroupOrder(CLMT);
-   wbAddGroupOrder(SPGD);
-   wbAddGroupOrder(RFCT);
-   wbAddGroupOrder(REGN);
-   wbAddGroupOrder(NAVI);
-   wbAddGroupOrder(CELL);
-   wbAddGroupOrder(WRLD);
-   wbAddGroupOrder(DIAL);
-   wbAddGroupOrder(QUST);
-   wbAddGroupOrder(IDLE);
-   wbAddGroupOrder(PACK); {Original Routine Crashes Dump}
-   wbAddGroupOrder(CSTY);
-   wbAddGroupOrder(LSCR);
-   wbAddGroupOrder(LVSP);
-   wbAddGroupOrder(ANIO);
-   wbAddGroupOrder(WATR);
-   wbAddGroupOrder(EFSH);
-   wbAddGroupOrder(EXPL);
-   wbAddGroupOrder(DEBR);
-   wbAddGroupOrder(IMGS);
-   wbAddGroupOrder(IMAD);
-   wbAddGroupOrder(FLST);
-   wbAddGroupOrder(PERK); {Original Routine Crashes Dump}
-   wbAdDefineTES5h;
+   wbAddGroupOrder(HAZD
+   wbAddGroupOrder(SMQN);
+   wbAddGroupOrder(SMEN);
+   wbAddGroupOrder(DLBR);
+   wbAddGroupOrder(MUST);
+   wbAddGroupOrder(DLVW);
+   wbAddGroupOrder(WOOP);
+   wbAddGroupOrder(SHOU);
+   wbAddGroupOrder(EQUP);
+   wbAddGroupOrder(RELA);
+   wbAddGroupOrder(SCEN);
+   wbAddGroupOrder(ASTP);
+   wbAddGroupOrder(OTFT);
+   wbAddGroupOrder(ARTO);
+   wbAddGroupOrder(MATO);
+   wbAddGroupOrder(MOVT);
+//   wbAddGroupOrder(HAZD);
+   wbAddGroupOrder(SNDR);
+   wbAddGroupOrder(DUAL);
+   wbAddGroupOrder(SNCT);
+   wbAddGroupOrder(SOPM);
+   wbAddGroupOrder(COLL);
+   wbAddGroupOrder(CLFM);
+   wbAddGroupOrder(REVB);
+end;
+
+procedure DefineTES5;
+begin
+  DefineTES5a;
+  DefineTES5b;
+  DefineTES5c;
+  DefineTES5d;
+  DefineTES5e;
+  DefineTES5f;
+  DefineTES5g;
+  DefineTES5h;
   DefineTES5i;
   DefineTES5j;
   DefineTES5k;
