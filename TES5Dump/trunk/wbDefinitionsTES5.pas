@@ -6031,24 +6031,24 @@ begin
 
   wbSkillEnum :=
     wbEnum([
-      'None',
       'Unknown 1',
       'Unknown 2',
       'Unknown 3',
       'Unknown 4',
       'Unknown 5',
-      'OneHanded',
-      'TwoHanded',
-      'Marksman',
+      'Unknown 6',
+      'One Handed',
+      'Two Handed',
+      'Archery',
       'Block',
       'Smithing',
-      'HeavyArmor',
-      'LightArmor',
+      'Heavy Armor',
+      'Light Armor',
       'Pickpocket',
       'Lockpicking',
       'Sneak',
       'Alchemy',
-      'Speechcraft',
+      'Speech',
       'Alteration',
       'Conjuration',
       'Destruction',
@@ -6056,7 +6056,7 @@ begin
       'Restoration',
       'Enchanting'
     ], [
-      -1, 'None'
+    -1, 'None'
     ]);
 
   wbCastEnum := wbEnum([
@@ -11350,10 +11350,12 @@ begin
 //             {07} '',
 //             {08} '',
 //                         {10} '',
-//             {11} 'Invisibility',
-//             {12} 'Chameleon',
-//             {13} 'Light',
-//             {14} ''//             {17} 'Open',
+//             {11} 'Invisibility',Data)
+    ),
+
+    wbLString(RNAM, 'Prompt'),
+    wbFormIDCk(ANAM, 'Speaker', [NPC_]),
+    wbFormIDCk({17} 'Open',
 //             {18} 'Bound Item',
 //        VMAD,
     wbOBNDReq,
