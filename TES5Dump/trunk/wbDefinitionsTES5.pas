@@ -14389,49 +14389,53 @@ begin
       wbRStruct('Dynamic Cloud Textures', [
         wbString(_00_0TX, 'Unknown'),
         wbString(_10_0TX, 'Unknown'),
-        wbString(_20_0TX, 'Unknown'),
-        wbString(_30_0TX, 'Unknown'),
+        wbString(_20_0TX, 'UnkFormIDCK(MNAM, 'Precipitation Type', [SPGD, NULL]     wbString(_30_0TX, 'Unknown'),
         wbString(_40_0TX, 'Unknown'),
         wbString(_50_0TX, 'Unknown'),
         wbString(_60_0TX, 'Unknown'),
-        wbString(_70_0TX, 'Unknown'),
-        wbString(_80_0TX, 'Unknown'),
+        RArray('Unknown', wbRStruct('Unknown', [
+      wbArray(RNAMnown(FNAM),
+//    wbByteArray(INAM, 'Unknown', 304, cpIgnore, True),
+//    wbUnknown(INARArray('Unknown', wbRStruct('Unknown', [
+      wbArray(QNAMnown(FNAM),
+//    wbByteArray(INAM, 'Unknown', 304, cpIgnore, True),
+//    wbUnknown(INARArray('Unknown', wbRStruct('Unknown', [
+      wbArray(PNAMnown(FNAM),
+//    wbByteArray(INAM, 'Unknown', 304, cpIgnore, True),
+//    wbUnknoknown'),
         wbString(_90_0TX, 'Unknown'),
         wbString(_3A_0TX, 'Unknown'),
         wbString(_3B_0TX, 'Unknown'),
         wbString(_3C_0TX, 'Unknown'),
         wbString(_3D_0TX, 'Unknown'),
-        wbString(_3E_0TX, 'Unknown'),
+        RArray('Unknown', wbRStruct('Unknown', [
+      wbArray(JNAMnown(FNAM),
+//    wbByteArray(INAM, 'Unknown', 304, cpIgnore, True),
+//    wbUnkno, 'Unknown'),
         wbString(_3F_0TX, 'Unknown'),
         wbString(_40h_0TX, 'Unknown'),
         wbString(A0TX, 'Unknown'),
-        wbString(B0TX, 'Unknown'),
-        wbString(C0TX, 'Unknown'),
-        wbString(D0TX, 'Unknown'),
-        wbString(E0TX, 'Unknown'),
-        wbString(F0TX, 'Unknown'),
-        wbString(G0TX, 'Unknown'),
-        wbString(H0TX, 'Unknown'),
-        wbString(I0TX, 'Unknown'),
-        wbString(J0TX, 'Unknown'),
-        wbString(K0TX, 'Unknown'),
-        wbString(L0TX, 'Unknown')
-      ], [])
-    ], []),
-
-    wbString(DNAM, 'Cloud Textures - Layer 0', 0, cpNormal, True),
-    wbString(CNAM, 'Cloud Textures - Layer 1', 0, cpNormal, True),
-    wbString(ANAM, 'Cloud Textures - Layer 2', 0, cpNormal, True),
-    wbString(BNAM, 'Cloud Textures - Layer 3', 0, cpNormal, True),
-    wbUnknown(LNAM),
-    wbUnknown(MNAM),
-    wbUnknown(NNAM),
-//    wbArray(ONAM, 'Cloud Speed', wbInteger('Layer', itU8{, wbDiv(2550)}), 4, nil, nil, cpNormal, True),
-    wbUnknown(ONAM),
-    wbUnknown(RNAM),
-    wbUnknown(QNAM),
-    wbUnknown(PNAM),
-//    wbByteArray(PNAM, 'Unknown', 0, cpIgnore),
+        wbString(B0TX, 'Unk//    wbUnknown(NAM0),
+    wbArray(NAM0, 'Colors by Types/Times',
+      wbArray('Type',
+        wbStruct('TimebFloat('Noise Properties - Noise Layer Three - UV Scale'),
+        wbFloat('Noise Properties - Noise Layer One - Amplitude Scale'),
+        wbFloat('Noise Properties - No['Sunrise', 'Day', 'Sunset', 'Night']
+      ),
+      ['Unknown 1','Unknown 2','Unknown 3','Ambient','Unknown 5','Unknown 6',
+      'Unknown 7','Unknown 8','Unknown 9','Unknown 10', 'Unknown 11', 'Unknown 12',
+      'Unknown 13','Unknown 14','Unknown 15','Unknown 16','Unknown 17']
+    , cpNormal, True),
+    wbStruct(FNAM, 'Fog Distance', [
+      wbFloat('Day - Near'),
+      wbFloat('Day - Far'),
+      wbFloat('Night - Near'),
+      wbFloat('Night - Far'),
+      wbFloat('Day - Power'),
+      wbFloat('Night - Power'),
+      wbFloat('Day - Max'),
+      wbFloat('Night - Max')
+    ], cpNormal, True, 'Unknown', 0, cpIgnore),
 //    wbRArray('Unknown - PNAM', wbRStruct('Unknown', [
 //      wbArray(PNAM, 'Unknown', wbFormID('Unknown'), 0, nil, nil, cpNormal, True)
 //    ], [])),
@@ -14453,18 +14457,45 @@ begin
 //      ['Sky-Upper','Fog','Clouds-Lower','Ambient','Sunlight','Sun','Stars','Sky-Lower','Horizon','Clouds-Upper']
 //    , cpNormal, True),
     wbRArray('Unknown - NAM0', wbRStruct('Unknown', [
-      wbArray(NAM0, 'Unknown', wbFormID('Unknown'), 0, nil, nil, cpNormal, True)
-    ], [])),
-//    wbStruct(FNAM, 'Fog Distance', [
-//      wbFloat('Day - Near'),
-//      wbFloat('Day - Far'),
-//      wbFloat('Night - Near'),
-//      wbFloat('Night - Far'),
-//      wbFloat('Day - Power'),
-//      wbFloat('Night - Fower')
-//    ], cpNormal, True),
-    wbUnknown(FNAM),
-//    wbByteArray(INAM, 'Unknown', 304, cpIgnore, True),
+      wbArray(NAM0, 'Unknown', wbFormI
+      wbStruct(SNAM, 'Sound', [
+        wbFormIDCK('Sound', [SNDR, NULL]),
+        wbInteger('Type', itU32, wbEnum([
+          {0x01} 'Default',
+          {0x02} 'Precipitation',
+          {0x04} 'Wind',
+          {0x08} 'Thunder'
+        ]))
+      ])
+    ),
+    wbRArrayS('Texture Names', wbFormIDCk(TNAM, 'Texture Name', [STAT, NULL])),
+    wbStruct(IMSP, 'Image Spaces', [
+      wbFormIDCK('Sunrise', [IMGS, NULL]),
+      wbFormIDCK('Day', [IMGS, NULL]),
+      wbFormIDCK('Sunset', [IMGS, NULL]),
+      wbFormIDCK('Night', [IMGS, NULL])
+    ]),----------------------------
+  wbRecord(PACK, 'Package', [
+    wbEDIDReq,
+    wbV  wbRArray('Directional Ambient Lightning Colors',
+      wbStruct(DALC, 'In order by Day/Night/Sunrise/Sunset', [
+{-->}   wbArray('Time of Day',
+{-->}     wbStruct('Values For', [
+{-->}       wbInteger('Red', itU8),
+{-->}       wbInteger('Green', itU8),
+{-->}       wbInteger('Blue', itU8),
+{-->}       wbByteArray('Unknown', 1)
+{-->}     ]), ['X+','X-','Y+','Y-','Z+',
+{-->}          'Z-', 'Specular']),
+{-->}   wbFloat('Fresnel Power')
+      ])//,
+//     ['Unknown 1','Unknown 2','Unknown 3','Unknown 4']
+    ),----------------------------
+  wbRecord(PACK, 'Package', [
+    wbEDIDReq,
+    wbV//    wbRArray('Unknown - DALC', wbRStruct('Unknown', [
+//      wbArray(DALC, 'Directional Ambient Lightning Color', wbByteArray('Unknown', 4), 0, nil, nil, cpNormal, True)
+//
 //    wbUnknown(INAM),
     wbStruct(DATA, '', [
       wbInteger('Wind Speed', itU8),
@@ -14995,11 +15026,17 @@ begin
    wbAddGroupOrder(IMAD);
    wbAddGroupOrder(FLST);
    wbAddGroupOrder(PERK); {Original Routine Crashes Dump}
-   wbAddGroupOrder(BPTD);
-   wbAddGroupOrder(ADDN);
-   wbAddGroupOrder(AVIF);
-   wbAddGroupOrder(CAMS);
-   wbAddGroupOrder(CPTH);
-   wbAddGroupOrder(VTYP);
-   wbAddGroupOrder(MATT);
-   wbA
+   wbAdDefineTES5h;
+  DefineTES5i;
+  DefineTES5j;
+  DefineTES5k;
+  DefineTES5l;
+  DefineTES5m;
+  DefineTES5n;
+  DefineTES5o;
+  DefineTES5p;
+  DefineTES5q;
+end;
+
+initialization
+end.
