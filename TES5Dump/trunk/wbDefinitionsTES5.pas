@@ -113,8 +113,8 @@ const
 
   AACT : TwbSignature = 'AACT';
   ACBS : TwbSignature = 'ACBS';
-  ACEC : TwbSignature = 'ACBS'; { New To Dawnguard }
-  ACEP : TwbSignature = 'ACBS'; { New To Dawnguard }
+  ACEC : TwbSignature = 'ACEC'; { New To Dawnguard }
+  ACEP : TwbSignature = 'ACEP'; { New To Dawnguard }
   ACHR : TwbSignature = 'ACHR';
   ACID : TwbSignature = 'ACID'; { New To Dawnguard }
   ACPR : TwbSignature = 'ACPR'; { New To Skyrim }
@@ -522,6 +522,7 @@ const
   RCLR : TwbSignature = 'RCLR';
   RCOD : TwbSignature = 'RCOD';
   RCPE : TwbSignature = 'RCPE';
+  RCPR : TwbSignature = 'RCPR'; { New to Dawnguard }
   RCQY : TwbSignature = 'RCQY';
   RDAT : TwbSignature = 'RDAT';
   RDGS : TwbSignature = 'RDGS';
@@ -9200,8 +9201,8 @@ begin
       wbByteArray('Unknown', 4*48),
       wbInteger('Radial Blur Flags', itU32, wbFlags(['Use Target'])),
       wbFloat('Radial Blue Center X'),
-      wbFloat('Radial Blue Center Y'),
-      wbArray('Unknown', wbByteArray(
+      wbFloat('Radial B wbStruct(TNAM, 'Tint', [
+        wbFloat('Unknown'),
         wbStruct('Tint', [
           wbFloat('Red', cpNormal, True, 255, 0),
           wbFloat('Green', cpNormal, True, 255, 0),
@@ -9980,23 +9981,31 @@ begin
     wbunknown(ENAM),
     wbFormIDCk(SNAM, 'Sound 1', [SNDR, SOUN, NULL]),
     wbFormIDCk(NAM1, 'Sound 2', [SNDR, SOUN, NULL]),
-    wbFormIDCk(NAM2, 'Unknown', [HAZD, NULL])
-  ]);
-
-ocation', [
+    wbFormIDCk(NAM2, 'Unknown', [HAZD//    EDID           ACSR ACEC      FULL KSIZ KWDA PNAM MNAM RNAM
+//    EDID                ACEC      FULL KSIZ KWDA PNAM MNAM RNAM
+//    EDID ACPR ACUN ACSR ACEC ACEP FULL KSIZ KWDA PNAM MNAM RNAM
+//    EDID           ACSR ACEC ACEP FULL KSIZ KWDA PNAM MNAM RNAM
+//    EDID ACPR ACUN ACSR ACEC      FULL PNAM MNAM RNAM NAM0
+//    EDID           ACSR ACEC ACEP FULL PNAM MNAM RNAM
+//    EDID ACPR ACUN ACSR      ACEP FULL PNAM
+//    EDID           ACSR      ACEP FULL KSIZ KWDA PNAM MNAM RNAM
+  wbRecord(LCTN, 'Location', [
     wbEDIDReq,
+
     wbUnknown(ACPR),
     wbArray(LCPR, 'Actors', wbStruct('', [
       wbFormIDCk('Actor', [ACHR]),
       wbFormIDCk('Location', [WRLD, CELL]),
       wbByteArray('Unknown', 4)
     ])),
+
     wbUnknown(ACUN),
     wbArray(LCUN, 'Unique Refs', wbStruct('', [
       wbFormIDCk('Actor', [NPC_]),
       wbFormIDCk('Ref', [ACHR]),
       wbFormIDCk('Location', [LCTN])
     ])),
+
     wbUnknown(ACSR),
     wbArray(LCSR, 'Location Ref Types', wbStruct('', [
       wbFormIDCk('Loc Ref Type', [LCRT]),
@@ -10004,6 +10013,7 @@ ocation', [
       wbFormIDCk('Location', [WRLD, CELL]),
       wbByteArray('Unknown', 4)
     ])),
+
     wbUnknown(ACEC),
     wbRArray('Unknown',
       wbStruct(LCEC, 'Unknown', [
@@ -10011,14 +10021,18 @@ ocation', [
         wbArray('Unknown', wbByteArray('Unknown', 4))
       ])
     ),
+
     wbArray(ACID, 'Unknown', wbFormIDCk('Ref', [ACHR, REFR])),
     wbArray(LCID, 'Unknown', wbFormIDCk('Ref', [ACHR, REFR])),
+
     wbUnknown(ACEP),
     wbArray(LCEP, 'Unknown', wbStruct('', [
       wbFormIDCk('Actor', [ACHR]),
       wbFormIDCk('Ref', [REFR]),
       wbByteArray('Unknown', 4)
     ])),
+
+    wbUnknown(RCPR),
     wbFull,
     wbKeywords,
     wbFormIDCk(PNAM, 'Parent Location', [LCTN, NULL]),
@@ -10027,7 +10041,7 @@ ocation', [
     wbFormIDCk(MNAM, 'World Location Marker Ref', [REFR]),
     wbFloat(RNAM, 'World Location Radius'),
     wbFormIDCk(NAM0, 'Horse Marker Ref', [REFR]),
-    wbCNAM'Hollow Metal', [IPCT, NULL]),
+    wbCNAM'Hollow M Metal', [IPCT, NULL]),
       wbFormIDCk('Organic Bug', [IPCT, NULL]),
       wbFormIDCk('Organic Glow', [IPCT, NULL])
     ], cpNormal, True, nil, 9),
@@ -11961,27 +11975,30 @@ begin
 
   wbPKDT := wbStruct(PKDT, 'Pack Data', [
     wbInteger('General Flags', itU32, wbPKDTFlags),
-    wbInteger('Type', itU8, wbPKDTType),
-    wbInteger('Interrupt Override', itU8, wbEnum([
-      'None',
-      'Spectator',
-      'ObserveDead',
-      'GuardWarn',
-      'Combat'
-    ])),
-    wbInteger('Preferred Speed', itU8, wbEnum([
-      'Walk',
-      'Jog',
-      'Run',
-      'Fast Walk'
-    ])),
-    wbByteArray('Unknown', 1),
-    wbInteger('Interrupt Flags', itU32, wbFlags([
-      {0x00000001}'Hellos to player',
-      {0x00000002}'Random conversations',
-      {0x00000004}'Observe combat behavior',
-      {0x00000008}'Greet corpse behavior',
-      {0x00000010}'Reaction to player ac
+    wbInteger('Type'0}'Unknown 26',
+      {0x03000000}'Unknown 27',
+      {0x08000000}'Unknown 28',
+      {0x10000000}'Unknown 29',
+      {0x20000000}'Unknown 30',
+      {0x40000000}'Unknown 31',
+      {0x80000000}'Unknown 32'
+    ]))
+  ], cpNormal, True);
+
+  wbPSDT := wbStruct(PSDT, 'Schedule', [
+    wbInteger('Month', itS8),
+    wbInteger('Day of week', itS8, wbEnum([
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Weekdays',
+      'Weekends',
+      'Monday, Wednesday, Friday',
+      'Tuesday, Thursday'
     ], [
       -1, 'Any'
     ])),
@@ -14982,28 +14999,28 @@ begin
    wbAddGroupOrder(LTEX);
    wbAddGroupOrder(ENCH);
    wbAddGroupOrder(SPEL);
-   wbAddGroupOrder(SCRL);
-   wbAddGroupOrder(ACTI);
-   wbAddGroupOrder(TACT);
-   wbAddGroupOrder(ARMO);
-   wbAddGroupOrder(BOOK);
-   wbAddGroupOrder(CONT);
-   wbAddGroupOrder(DOOR);
-   wbAddGroupOrder(INGR);
-   wbAddGroupOrder(LIGH);
-   wbAddGroupOrder(MISC);
-   wbAddGroupOrder(APPA);
-   wbAddGroupOrder(STAT);
-   wbAddGroupOrder(SCOL); {Empty}
-   wbAddGroupOrder(MSTT);
-   wbAddGroupOrder(PWAT); {Empty}
-   wbAddGroupOrder(GRAS);
-   wbAddGroupOrder(TREE);
-   wbAddGroupOrder(CLDC); {Empty}
-   wbAddGroupOrder(FLOR);
-   wbAddGroupOrder(FURN);
-   wbAddGroupOrder(WEAP);
-   wbAddGLCTN);
+   wbAd
+   wbAddGroupOrder(ANIO);
+   wbAddGroupOrder(WATR);
+   wbAddGroupOrder(EFSH);
+   wbAddGroupOrder(EXPL);
+   wbAddGroupOrder(DEBR);
+   wbAddGroupOrder(IMGS);
+   wbAddGroupOrder(IMAD);
+   wbAddGroupOrder(FLST);
+   wbAddGroupOrder(PERK); {Original Routine Crashes Dump}
+   wbAddGroupOrder(BPTD);
+   wbAddGroupOrder(ADDN);
+   wbAddGroupOrder(AVIF);
+   wbAddGroupOrder(CAMS);
+   wbAddGroupOrder(CPTH);
+   wbAddGroupOrder(VTYP);
+   wbAddGroupOrder(MATT);
+   wbAddGroupOrder(IPCT);
+   wbAddGroupOrder(IPDS);
+   wbAddGroupOrder(ARMA);
+   wbAddGroupOrder(ECZN);
+   wbAddGroupOrder(LCTN);
    wbAddGroupOrder(MESG);
    wbAddGroupOrder(RGDL); {Empty}
    wbAddGroupOrder(DOBJ);
