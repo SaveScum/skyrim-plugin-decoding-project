@@ -113,6 +113,8 @@ const
 
   AACT : TwbSignature = 'AACT';
   ACBS : TwbSignature = 'ACBS';
+  ACEC : TwbSignature = 'ACBS'; { New To Dawnguard }
+  ACEP : TwbSignature = 'ACBS'; { New To Dawnguard }
   ACHR : TwbSignature = 'ACHR';
   ACID : TwbSignature = 'ACID'; { New To Dawnguard }
   ACPR : TwbSignature = 'ACPR'; { New To Skyrim }
@@ -9199,10 +9201,10 @@ begin
       wbInteger('Radial Blur Flags', itU32, wbFlags(['Use Target'])),
       wbFloat('Radial Blue Center X'),
       wbFloat('Radial Blue Center Y'),
-      wbArray('Unknown', wbByteArray('Unknown', 4), 3),
-      wbInteger('DoF Flags', itU32, wbFlags([
-        {0x00000001}'Use Target',
-      cpNormal, True, 255, 0),
+      wbArray('Unknown', wbByteArray(
+        wbStruct('Tint', [
+          wbFloat('Red', cpNormal, True, 255, 0),
+          wbFloat('Green', cpNormal, True, 255, 0),
           wbFloat('Blue', cpNormal, True, 255, 0),
           wbFloat('Alpha', cpNormal, True, 255, 0)
         ]),
@@ -10002,6 +10004,7 @@ ocation', [
       wbFormIDCk('Location', [WRLD, CELL]),
       wbByteArray('Unknown', 4)
     ])),
+    wbUnknown(ACEC),
     wbRArray('Unknown',
       wbStruct(LCEC, 'Unknown', [
         wbFormIDCk('Location', [WRLD, CELL]),
@@ -10010,6 +10013,7 @@ ocation', [
     ),
     wbArray(ACID, 'Unknown', wbFormIDCk('Ref', [ACHR, REFR])),
     wbArray(LCID, 'Unknown', wbFormIDCk('Ref', [ACHR, REFR])),
+    wbUnknown(ACEP),
     wbArray(LCEP, 'Unknown', wbStruct('', [
       wbFormIDCk('Actor', [ACHR]),
       wbFormIDCk('Ref', [REFR]),
@@ -10843,13 +10847,11 @@ begin
       ]),
       wbInteger('Flags', itU8, wbFlags([
         {0x01} 'Parent',
-    Unknown(DNAM),
-    wbUnknown(TRDTnt',
-        {0x02} 'Sequence',
-        {0x04} 'No Attacking',
-        {0x04} 'Blocking'
-      ], True)),
-      wbInteger('Animation Group Section', itU8, wbIdleAnam),
+    wbRArray('Link To', wbFormIDCk(TCLT, 'Response', [DIAL, INFO, NULL])),
+    wbFormID(DNAM, 'Response Data'),
+    wbCTDAs,
+
+    wbRArray('Responses', wbRStruct('Response', [ // Begin Arraynimation Group Section', itU8, wbIdleAnam),
       wbInteger('Replay Delay', itU16)
     ], cpIgnore, True)
   ]);
@@ -10873,11 +10875,9 @@ begin
         {0x0400} 'Can move while greeting',
         {0x0800} 'No LIP File',
         {0x1000} 'Requires post-processing',
-        {0x2000} 'Audio Output Override',
-        {0x4000} 'Spends favor points',
-        {0x8000} 'Unknown 16'
-      ])),
-      wbInteger('Reset Hours', itU16, wbDiv(2730))
+        {0x2000} 'Audio Output Override',CTDAs,
+      wbFormIDCk(LNAM, 'Idle Animations: Listener', [IDLE])
+    ], [])), // End ArraytU16, wbDiv(2730))
     ]),
     wbFormIDCk(PNAM, 'Previous INFO', [INFO, NULL]),
     wbInteger(CNAM, 'Favor Level', itU8, wbEnum([
@@ -11550,8 +11550,8 @@ begin
         {0x0001} 'Use Traits',
         {0x0002} 'Use Stats',
         {0x0004} 'Use Factions',
-        {ByteArray(PNAM, 'Unknown', 4),
-    wbByteArray(UNAM, 'Unknown', 4
+   //    wbByteArray(PNAM, 'Unknown', 4),
+//    wbByteArray(UNAM, 'Unknown', 4
         {0x0008} 'Use Spell List',
         {0x0010} 'Use AI Data',
         {0x0020} 'Use AI Packages',
@@ -11981,11 +11981,14 @@ begin
       {0x00000002}'Random conversations',
       {0x00000004}'Observe combat behavior',
       {0x00000008}'Greet corpse behavior',
-      {0x00000010}'Reaction to player actions',
-      {0x00000020}'Friendly fire comments',
-      {0x00000040}'Aggro Radius Behavior',
-      {0x00000080}'Allow Idle Chatter',
-      {0x00000100}'Un
+      {0x00000010}'Reaction to player ac
+    ], [
+      -1, 'Any'
+    ])),
+    wbInteger('Date', itU8),
+    wbInteger('Hour', itS8),
+    wbInteger('Minute', itS8),
+    wbByteArray('Unknown', 3),
     wbInteger('Duration (minutes)', itS32)
   ], cpNormal, True);
 
@@ -12761,7 +12764,7 @@ rmIDCk(NAM7, 'Decapitation FX', [ARTO, NULL]),
       wbByteArray('Unknown', 4),
       wbByteArray('Unknown', 4),
       wbByteArray('Unknown', 4),
-      wbByteArray('UwbByteArray('Unknown', 4),
+      wbByteArray('UFormIDCk(ATKR, 'Attack Race', [RACE], False, cpNormal, FalsyteArray('UwbByteArray('Unknown', 4),
       wbByteArray('Unknown', 4),
       wbByteArray('Unknown', 4),
       wbByteArray('Unknown', 4),
@@ -15000,15 +15003,15 @@ begin
    wbAddGroupOrder(FLOR);
    wbAddGroupOrder(FURN);
    wbAddGroupOrder(WEAP);
-   wbAddGroupOrder(AMMO);
-   wbAddGroupOrder(NPC_);
-   wbAddGroupOrder(LVLN);
-   wbAddGroupOrder(KEYM);
-   wbAddGroupOrder(ALCH);
-   wbAddGroupOrder(IDLM);
-   wbAddGroupOrder(COBJ);
-   wbAddGroupOrder(PROJ);
-   wbAddGroupOrder(HAZD
+   wbAddGLCTN);
+   wbAddGroupOrder(MESG);
+   wbAddGroupOrder(RGDL); {Empty}
+   wbAddGroupOrder(DOBJ);
+   wbAddGroupOrder(LGTM);
+   wbAddGroupOrder(MUSC);
+   wbAddGroupOrder(FSTP);
+   wbAddGroupOrder(FSTS);
+   wbAddGroupOrder(SMBN);
    wbAddGroupOrder(SMQN);
    wbAddGroupOrder(SMEN);
    wbAddGroupOrder(DLBR);
