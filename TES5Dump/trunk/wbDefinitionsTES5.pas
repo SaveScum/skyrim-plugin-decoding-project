@@ -12502,15 +12502,12 @@ rmIDCk(NAM7, 'Decapitation FX', [ARTO, NULL]),
   ,
       wbByteArray('Unknown', 4),
       wbByteArray('Unknown      {0x00000020}'Unknown 6',
-        {0x00000040}'Unknown 7',
-        {0x00000080}'Unknown 8',
-        {0x00000100}'Unknown 9',
-        {0x00000200}'Unknown 10',
-        {0x00000400}'Unknown 11',
-        {0x00000800}'Unknown 12',
-        {0x00001000}'Unknown 13',
-        {0x00002000}'Unknown 14',
-        {0x00004000}'Unknown 15Empty(NAM2, 'Marker NAM2 #1'),
+      Empty(MNAM, 'Marker'),
+    wbString(ANAM, 'Skeletal Model'),
+    wbMODT,
+    wbEmpty(FNAM, 'Marker'),
+    wbString(ANAM, 'Skeletal Model'),
+    wbMODTnknown 15Empty(NAM2, 'Marker NAM2 #1'),
     wbRArrayS('Movement Type Names', wbString(MTNM, 'Name'    {0x00100000}'Unknown 21',
         {0x00200000}'Unknown 22',
         {0x00400000}'Unknown 23',
@@ -12615,7 +12612,8 @@ rmIDCk(NAM7, 'Decapitation FX', [ARTO, NULL]),
           wbRArray('Array FTSM', wbRStruct('Unknown', [
             wbFormIDCk(FTSM, 'Hair Color Male', [TXST, NULL])
           ], [])),
-              NAME                                    XALP      XSCL      DATA
+  , False, nil, cpNormal, False, wbRemoveOFST);
+          NAME                                    XALP      XSCL      DATA
 // Pattern 13:           NAME XRDS XEMI XLIG                                         DATA
 // Pattern 14:           NAME                                    XLIB XESP           DATA
 // Pattern 15:           NAME                                         XLRT      XOWN DATA
@@ -14035,9 +14033,7 @@ begin
     wbFormIDCk(INAM, 'Image Space', [IMGS]),
     wbFloat(NAMA, 'Unknown'),
 Unknown(XWEnknown'),
-    wbInteger(DATA, 'Flags', itU8, wbFlags([
-      {0x01} 'Small World',
-      {0x02} 'Can''t Fast Travel',
+    wbInteger(DATA, 'Flags', itU8,    {0x02} 'Can''t Fast Travel',
       {0x04} 'Unknown 3',
       {0x08} 'Unknown 4',
       {0x10} 'No LOD Water',
