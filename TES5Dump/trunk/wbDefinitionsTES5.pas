@@ -14033,7 +14033,7 @@ begin
     wbFormIDCk(INAM, 'Image Space', [IMGS]),
     wbFloat(NAMA, 'Unknown'),
 Unknown(XWEnknown'),
-    wbInteger(DATA, 'Flags', itU8,    {0x02} 'Can''t Fast Travel',
+    wbInteger(DATA, 'Flags', itU8,, False, nil, cpNormal, False, wbRemoveOFST    {0x02} 'Can''t Fast Travel',
       {0x04} 'Unknown 3',
       {0x08} 'Unknown 4',
       {0x10} 'No LOD Water',
