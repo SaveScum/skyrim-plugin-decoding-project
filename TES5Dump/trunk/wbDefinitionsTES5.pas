@@ -8814,15 +8814,11 @@ begin
     wbStruct(BNAM, 'Blur', [
       wbFloat('Unknown'),
       wbFloat('Radius'),
-      wbFloat('Unknown'),
-      wbFloat('Unknown'),
       wbUnknown
     ]),
     wbStruct(VNAM, 'Double Vision', [
       wbFloat('Unknown'),
       wbFloat('Strength'),
-      wbFloat('Unknown'),
-      wbFloat('Unknown'),
       wbUnknown
     ]),
     wbRStruct('Cinematic Colors', [
@@ -8834,11 +8830,6 @@ begin
           wbFloat('Blue', cpNormal, True, 255, 0),
           wbFloat('Alpha', cpNormal, True, 255, 0)
         ]),
-        wbFloat('Unknown'),
-        wbFloat('Unknown'),
-        wbFloat('Unknown'),
-        wbFloat('Unknown'),
-        wbFloat('Unknown'),
         wbUnknown
       ]),
       wbStruct(NAM3, 'Fade', [
@@ -8849,11 +8840,6 @@ begin
           wbFloat('Blue', cpNormal, True, 255, 0),
           wbFloat('Alpha', cpNormal, True, 255, 0)
         ]),
-        wbFloat('Unknown'),
-        wbFloat('Unknown'),
-        wbFloat('Unknown'),
-        wbFloat('Unknown'),
-        wbFloat('Unknown'),
         wbUnknown
       ])
     ], []),
