@@ -2550,7 +2550,7 @@ const
 {V} (Index: 427; Name: 'GetPlantedExplosive'),
 {N} (Index: 429; Name: 'IsScenePackageRunning'),
 {V} (Index: 430; Name: 'GetHealthPercentage'),
-{V} (Index: 432; Name: 'GetIsObjectType'; ParamType1: ptFormType), // needs more work on formtype
+{V} (Index: 432; Name: 'GetIsObjectType'; ParamType1: ptFormType),
 {V} (Index: 434; Name: 'GetDialogueEmotion'),
 {V} (Index: 435; Name: 'GetDialogueEmotionValue'),
 {V} (Index: 437; Name: 'GetIsCreatureType'; ParamType1: ptInteger),
@@ -2612,15 +2612,15 @@ const
 {N} (Index: 562; Name: 'LocationHasKeyword'; ParamType1: ptKeyword),
 {N} (Index: 563; Name: 'LocationHasRefType'; ParamType1: ptRefType),
 {N} (Index: 565; Name: 'GetIsEditorLocation'; ParamType1: ptLocation),
-{N} (Index: 566; Name: 'GetIsAliasRef'; ParamType1: ptAlias), // needs more work
-{N} (Index: 567; Name: 'GetIsEditorLocAlias'; ParamType1: ptAlias), // needs more work
+{N} (Index: 566; Name: 'GetIsAliasRef'; ParamType1: ptAlias),
+{N} (Index: 567; Name: 'GetIsEditorLocAlias'; ParamType1: ptAlias),
 {N} (Index: 568; Name: 'IsSprinting'),
 {N} (Index: 569; Name: 'IsBlocking'),
 {N} (Index: 570; Name: 'HasEquippedSpell'; ParamType1: ptCastingSource),
 {N} (Index: 571; Name: 'GetCurrentCastingType'; ParamType1: ptCastingSource),
 {N} (Index: 572; Name: 'GetCurrentDeliveryType'; ParamType1: ptCastingSource),
 {N} (Index: 574; Name: 'GetAttackState'),
-{N} (Index: 576; Name: 'GetEventData'; ParamType1: ptNone; ParamType2: ptNone; ParamType3: ptNone), // needs more work
+{N} (Index: 576; Name: 'GetEventData'; ParamType1: ptNone; ParamType2: ptNone; ParamType3: ptNone),
 {N} (Index: 577; Name: 'IsCloserToAThanB'; ParamType1: ptObjectReference; ParamType2: ptObjectReference),
 {N} (Index: 579; Name: 'GetEquippedShout'; ParamType1: ptShout),
 {N} (Index: 580; Name: 'IsBleedingOut'),
@@ -4950,7 +4950,7 @@ begin
 
   wbScriptObject := wbStruct('Object', [
     wbInteger('Unknown', itU16),
-    wbInteger('AliasID', itU16),
+    wbInteger('AliasID', itS16),
     wbFormID('FormID')
   ]);
 
@@ -4964,13 +4964,14 @@ begin
       wbInteger('Unknown', itU8),
       wbUnion('Value', wbScriptPropertyDecider, [
         {00} wbByteArray('Unknown', 0, cpIgnore),
-        {01} wbByteArray('Object', 8), {wbScriptObject,}
-        {02} wbLenString('String', 2),
+        {01} wbByteArray('Object', 8), {>>> should be wbScriptObject, but not shown in dump <<<}
+        {02} wbLenString('String', 2), {>>> bugged <<<}
+//        {02} wbArray('String', wbByteArray('', 1), -2),  {>>> bugged too <<<}
         {03} wbInteger('Int32', itU32),
         {04} wbFloat('Float'),
         {05} wbInteger('Bool', itU8, wbEnum(['False', 'True'])),
         {11} wbArray('Array of Object', wbByteArray('Element', 8), -1),
-        {12} wbArray('Array of String', wbLenString('Element', 2), -1),
+        {12} wbArray('Array of String', wbLenString('Element', 2), -1), // {>>> this won't work too <<<}
         {13} wbArray('Array of Int32', wbInteger('Element', itU32), -1),
         {14} wbArray('Array of Float', wbFloat('Element'), -1),
         {15} wbArray('Array of Bool', wbInteger('Element', itU8, wbEnum(['False', 'True'])), -1)
@@ -4980,7 +4981,7 @@ begin
 
   wbScriptFragments := wbStruct('Script Fragments', [
     wbUnknown
-// records have different fragments format, needs union
+{>>> records have different fragments format, needs union <<<}
 //    wbInteger('Unknown', itS8),
 //    wbInteger('fragmentCount', itU16),
 //    wbLenString('fileName', 2),
@@ -5006,13 +5007,17 @@ begin
     wbInteger('version', itS16),
     wbInteger('objFormat', itS16),
     wbInteger('scriptCount', itU16),
-    {>>> For some reason in rare cases when last property type is String <<<}
-    {>>> and VMAD has fragments section, wbScriptEntry gets bugged on that property <<<}
-    {>>> Example: Skyrim.esm Quest [00091F1A] <dunLabyrinthian> "Labyrinthian" <<< }
-    {>>> Scripts parsing replaced with bytearray for better times <<<}
-    wbByteArray('Scripts')
+
+{>>>
+    For some reason when property type is String
+    and VMAD has fragments section(?), wbScriptEntry gets bugged on that property
+    Example: Skyrim.esm Quest [00091F1A] <dunLabyrinthian> "Labyrinthian"
+    Scripts parsing replaced with bytearray for better times
+<<<}
+
     //wbArray('Scripts', wbScriptEntry, -2), // comment out scriptCount when -2
-    //wbScriptFragments
+    wbByteArray('Scripts'),
+    wbScriptFragments
   ], cpNormal, False, nil, -1);
 
   wbAttackData := wbRStruct('Attack Data', [
@@ -5300,7 +5305,7 @@ begin
   wbXLOD := wbArray(XLOD, 'Distant LOD Data', wbFloat('Unknown'), 3);
 
   wbXESP := wbStruct(XESP, 'Enable Parent', [
-    wbFormIDCk('Reference', [ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA]),
+    wbFormIDCk('Reference', [PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA]),
     wbInteger('Flags', itU8, wbFlags([
       'Set Enable State to Opposite of Parent',
       'Pop In'
@@ -5410,8 +5415,8 @@ begin
     ),
 
     wbRArray('Linked References', wbStruct(XLKR, 'Linked Reference', [
-      wbFormIDCk('Keyword/Ref', [KYWD, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA, NULL]),
-      wbFormIDCk('Ref', [ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA])
+      wbFormIDCk('Keyword/Ref', [KYWD, PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA, NULL]),
+      wbFormIDCk('Ref', [PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA])
     ], cpNormal, False, nil, 1)),
 
     {--- Activate Parents ---}
@@ -5421,7 +5426,7 @@ begin
       ], True)),
       wbRArrayS('Activate Parent Refs',
         wbStructSK(XAPR, [0], 'Activate Parent Ref', [
-          wbFormIDCk('Reference', [ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA]),
+          wbFormIDCk('Reference', [PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA]),
           wbFloat('Delay')
         ])
       )
@@ -5444,7 +5449,7 @@ begin
     ]),
 
     wbFormIDCk(XLCN, 'Persistent Location', [LCTN]),
-    wbFormIDCk(XLRL, 'Location Reference', [LCRT, NULL]),
+    wbFormIDCk(XLRL, 'Location Reference', [LCRT, LCTN, NULL]),
     wbEmpty(XIS2, 'Ignored by Sandbox'),
     wbArray(XLRT, 'Location Ref Type', wbFormIDCk('Ref', [LCRT, NULL])),
 		wbFormIDCk(XHOR, 'Horse', [ACHR]),
@@ -6100,7 +6105,7 @@ begin
         wbFormIDCkNoReach('Furniture', [FURN, FLST]),
         wbFormIDCkNoReach('Effect Item', [SPEL, ENCH, ALCH, INGR, SCRL]),
         wbFormIDCkNoReach('Base Effect', [MGEF]),
-        wbFormIDCkNoReach('Worldspace', [WRLD]),
+        wbFormIDCkNoReach('Worldspace', [WRLD, FLST]),
         wbInteger('VATS Value Function', itU32, wbVATSValueFunctionEnum),
         wbInteger('VATS Value Param (INVALID)', itU32),
         wbFormIDCkNoReach('Referenceable Object', [NULL, NPC_, PROJ, TREE, SOUN, ACTI, DOOR, STAT, FURN, CONT, ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, LIGH, GRAS, ASPC, IDLM, ARMA, MSTT, TACT, FLST, LVLI, LVSP, SPEL, SCRL, SHOU, SLGM], [NPC_, PROJ, TREE, SOUN, ACTI, DOOR, STAT, FURN, CONT, ARMO, AMMO, MISC, WEAP, BOOK, KEYM, ALCH, LIGH, GRAS, ASPC, IDLM, ARMA, MSTT, TACT, LVLI, LVSP, SPEL, SCRL, SHOU, SLGM]),
@@ -6156,7 +6161,7 @@ begin
         wbFormIDCkNoReach('Furniture', [FURN, FLST]),
         wbFormIDCkNoReach('Effect Item', [SPEL, ENCH, ALCH, INGR, SCRL]),
         wbFormIDCkNoReach('Base Effect', [MGEF]),
-        wbFormIDCkNoReach('Worldspace', [WRLD]),
+        wbFormIDCkNoReach('Worldspace', [WRLD, FLST]),
         wbInteger('VATS Value Function', itU32, wbVATSValueFunctionEnum),
         wbUnion('VATS Value Param', wbCTDAParam2VATSValueParam, [
          { 0} wbFormIDCkNoReach('Weapon', [WEAP]),
@@ -6596,8 +6601,8 @@ begin
       ], cpNormal, False, nil, 1)
     ),
     wbRArray('Linked References', wbStruct(XLKR, 'Linked Reference', [
-      wbFormIDCk('Keyword/Ref', [KYWD, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA, NULL]),
-      wbFormIDCk('Ref', [ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA])
+      wbFormIDCk('Keyword/Ref', [KYWD, PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA, NULL]),
+      wbFormIDCk('Ref', [PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA])
     ], cpNormal, False, nil, 1)),
     wbRStruct('Activate Parents', [
       wbInteger(XAPD, 'Flags', itU8, wbFlags([
@@ -6605,7 +6610,7 @@ begin
       ], True)),
       wbRArrayS('Activate Parent Refs',
         wbStructSK(XAPR, [0], 'Activate Parent Ref', [
-          wbFormIDCk('Reference', [ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA]),
+          wbFormIDCk('Reference', [PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA]),
           wbFloat('Delay')
         ])
       )
@@ -6615,7 +6620,7 @@ begin
     wbFormIDCk(XMBR, 'MultiBound Reference', [REFR]),
     wbEmpty(XIS2, 'Ignored by Sandbox'),
     wbArray(XLRT, 'Location Ref Type', wbFormIDCk('Ref', [LCRT, NULL])),
-    wbFormIDCk(XLRL, 'Location Reference', [LCRT, NULL]),
+    wbFormIDCk(XLRL, 'Location Reference', [LCRT, LCTN, NULL]),
     wbXSCL,
     wbDataPosRot
   ], True, wbPlacedAddInfo);
@@ -6637,8 +6642,8 @@ begin
       ], cpNormal, False, nil, 1)
     ),
     wbRArray('Linked References', wbStruct(XLKR, 'Linked Reference', [
-      wbFormIDCk('Keyword/Ref', [KYWD, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA, NULL]),
-      wbFormIDCk('Ref', [ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA])
+      wbFormIDCk('Keyword/Ref', [KYWD, PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA, NULL]),
+      wbFormIDCk('Ref', [PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA])
     ], cpNormal, False, nil, 1)),
     wbRStruct('Activate Parents', [
       wbInteger(XAPD, 'Flags', itU8, wbFlags([
@@ -6646,7 +6651,7 @@ begin
       ], True)),
       wbRArrayS('Activate Parent Refs',
         wbStructSK(XAPR, [0], 'Activate Parent Ref', [
-          wbFormIDCk('Reference', [ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA]),
+          wbFormIDCk('Reference', [PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA]),
           wbFloat('Delay')
         ])
       )
@@ -6656,7 +6661,7 @@ begin
     wbFormIDCk(XMBR, 'MultiBound Reference', [REFR]),
     wbEmpty(XIS2, 'Ignored by Sandbox'),
     wbArray(XLRT, 'Location Ref Type', wbFormIDCk('Ref', [LCRT, NULL])),
-    wbFormIDCk(XLRL, 'Location Reference', [LCRT, NULL]),
+    wbFormIDCk(XLRL, 'Location Reference', [LCRT, LCTN, NULL]),
     wbXSCL,
     wbDataPosRot
   ], True, wbPlacedAddInfo);
@@ -6678,8 +6683,8 @@ begin
       ], cpNormal, False, nil, 1)
     ),
     wbRArray('Linked References', wbStruct(XLKR, 'Linked Reference', [
-      wbFormIDCk('Keyword/Ref', [KYWD, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA, NULL]),
-      wbFormIDCk('Ref', [ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA])
+      wbFormIDCk('Keyword/Ref', [KYWD, PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA, NULL]),
+      wbFormIDCk('Ref', [PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA])
     ], cpNormal, False, nil, 1)),
     wbRStruct('Activate Parents', [
       wbInteger(XAPD, 'Flags', itU8, wbFlags([
@@ -6687,7 +6692,7 @@ begin
       ], True)),
       wbRArrayS('Activate Parent Refs',
         wbStructSK(XAPR, [0], 'Activate Parent Ref', [
-          wbFormIDCk('Reference', [ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA]),
+          wbFormIDCk('Reference', [PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA]),
           wbFloat('Delay')
         ])
       )
@@ -6697,7 +6702,7 @@ begin
     wbFormIDCk(XMBR, 'MultiBound Reference', [REFR]),
     wbEmpty(XIS2, 'Ignored by Sandbox'),
     wbArray(XLRT, 'Location Ref Type', wbFormIDCk('Ref', [LCRT, NULL])),
-    wbFormIDCk(XLRL, 'Location Reference', [LCRT, NULL]),
+    wbFormIDCk(XLRL, 'Location Reference', [LCRT, LCTN, NULL]),
     wbXSCL,
     wbDataPosRot
   ], True, wbPlacedAddInfo);
@@ -6719,8 +6724,8 @@ begin
       ], cpNormal, False, nil, 1)
     ),
     wbRArray('Linked References', wbStruct(XLKR, 'Linked Reference', [
-      wbFormIDCk('Keyword/Ref', [KYWD, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA, NULL]),
-      wbFormIDCk('Ref', [ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA])
+      wbFormIDCk('Keyword/Ref', [KYWD, PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA, NULL]),
+      wbFormIDCk('Ref', [PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA])
     ], cpNormal, False, nil, 1)),
     wbRStruct('Activate Parents', [
       wbInteger(XAPD, 'Flags', itU8, wbFlags([
@@ -6728,7 +6733,7 @@ begin
       ], True)),
       wbRArrayS('Activate Parent Refs',
         wbStructSK(XAPR, [0], 'Activate Parent Ref', [
-          wbFormIDCk('Reference', [ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA]),
+          wbFormIDCk('Reference', [PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA]),
           wbFloat('Delay')
         ])
       )
@@ -6738,7 +6743,7 @@ begin
     wbFormIDCk(XMBR, 'MultiBound Reference', [REFR]),
     wbEmpty(XIS2, 'Ignored by Sandbox'),
     wbArray(XLRT, 'Location Ref Type', wbFormIDCk('Ref', [LCRT, NULL])),
-    wbFormIDCk(XLRL, 'Location Reference', [LCRT, NULL]),
+    wbFormIDCk(XLRL, 'Location Reference', [LCRT, LCTN, NULL]),
     wbXSCL,
     wbDataPosRot
   ], True, wbPlacedAddInfo);
@@ -6760,8 +6765,8 @@ begin
       ], cpNormal, False, nil, 1)
     ),
     wbRArray('Linked References', wbStruct(XLKR, 'Linked Reference', [
-      wbFormIDCk('Keyword/Ref', [KYWD, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA, NULL]),
-      wbFormIDCk('Ref', [ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA])
+      wbFormIDCk('Keyword/Ref', [KYWD, PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA, NULL]),
+      wbFormIDCk('Ref', [PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA])
     ], cpNormal, False, nil, 1)),
     wbRStruct('Activate Parents', [
       wbInteger(XAPD, 'Flags', itU8, wbFlags([
@@ -6769,7 +6774,7 @@ begin
       ], True)),
       wbRArrayS('Activate Parent Refs',
         wbStructSK(XAPR, [0], 'Activate Parent Ref', [
-          wbFormIDCk('Reference', [ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA]),
+          wbFormIDCk('Reference', [PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA]),
           wbFloat('Delay')
         ])
       )
@@ -6779,7 +6784,7 @@ begin
     wbFormIDCk(XMBR, 'MultiBound Reference', [REFR]),
     wbEmpty(XIS2, 'Ignored by Sandbox'),
     wbArray(XLRT, 'Location Ref Type', wbFormIDCk('Ref', [LCRT, NULL])),
-    wbFormIDCk(XLRL, 'Location Reference', [LCRT, NULL]),
+    wbFormIDCk(XLRL, 'Location Reference', [LCRT, LCTN, NULL]),
     wbXSCL,
     wbDataPosRot
   ], True, wbPlacedAddInfo);
@@ -6802,8 +6807,8 @@ begin
       ], cpNormal, False, nil, 1)
     ),
     wbRArray('Linked References', wbStruct(XLKR, 'Linked Reference', [
-      wbFormIDCk('Keyword/Ref', [KYWD, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA, NULL]),
-      wbFormIDCk('Ref', [ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA])
+      wbFormIDCk('Keyword/Ref', [KYWD, PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA, NULL]),
+      wbFormIDCk('Ref', [PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA])
     ], cpNormal, False, nil, 1)),
     wbRStruct('Activate Parents', [
       wbInteger(XAPD, 'Flags', itU8, wbFlags([
@@ -6811,7 +6816,7 @@ begin
       ], True)),
       wbRArrayS('Activate Parent Refs',
         wbStructSK(XAPR, [0], 'Activate Parent Ref', [
-          wbFormIDCk('Reference', [ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA]),
+          wbFormIDCk('Reference', [PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA]),
           wbFloat('Delay')
         ])
       )
@@ -6821,7 +6826,7 @@ begin
     wbFormIDCk(XMBR, 'MultiBound Reference', [REFR]),
     wbEmpty(XIS2, 'Ignored by Sandbox'),
     wbArray(XLRT, 'Location Ref Type', wbFormIDCk('Ref', [LCRT, NULL])),
-    wbFormIDCk(XLRL, 'Location Reference', [LCRT, NULL]),
+    wbFormIDCk(XLRL, 'Location Reference', [LCRT, LCTN, NULL]),
     wbXSCL,
     wbDataPosRot
   ], True, wbPlacedAddInfo);
@@ -6844,8 +6849,8 @@ begin
       ], cpNormal, False, nil, 1)
     ),
     wbRArray('Linked References', wbStruct(XLKR, 'Linked Reference', [
-      wbFormIDCk('Keyword/Ref', [KYWD, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA, NULL]),
-      wbFormIDCk('Ref', [ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA])
+      wbFormIDCk('Keyword/Ref', [KYWD, PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA, NULL]),
+      wbFormIDCk('Ref', [PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA])
     ], cpNormal, False, nil, 1)),
     wbRStruct('Activate Parents', [
       wbInteger(XAPD, 'Flags', itU8, wbFlags([
@@ -6853,7 +6858,7 @@ begin
       ], True)),
       wbRArrayS('Activate Parent Refs',
         wbStructSK(XAPR, [0], 'Activate Parent Ref', [
-          wbFormIDCk('Reference', [ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA]),
+          wbFormIDCk('Reference', [PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA]),
           wbFloat('Delay')
         ])
       )
@@ -6863,7 +6868,7 @@ begin
     wbFormIDCk(XMBR, 'MultiBound Reference', [REFR]),
     wbEmpty(XIS2, 'Ignored by Sandbox'),
     wbArray(XLRT, 'Location Ref Type', wbFormIDCk('Ref', [LCRT, NULL])),
-    wbFormIDCk(XLRL, 'Location Reference', [LCRT, NULL]),
+    wbFormIDCk(XLRL, 'Location Reference', [LCRT, LCTN, NULL]),
     wbXSCL,
     wbDataPosRot
   ], True, wbPlacedAddInfo);
@@ -11561,7 +11566,7 @@ b  wbTints := wbRArray('Tint Masks', wbRStruct('Tint Assets', [
       ], True)),
       wbRArrayS('Activate Parent Refs',
         wbStructSK(XAPR, [0], 'Activate Parent Ref', [
-          wbFormIDCk('Reference', [ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA]),
+          wbFormIDCk('Reference', [PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA]),
           wbFloat('Delay')
         ])
       )
@@ -11612,12 +11617,12 @@ b  wbTints := wbRArray('Tint Masks', wbRStruct('Tint Assets', [
 
     wbInteger(XCNT, 'Item Count', itS32),
     wbFloat(XCHG, 'Charge'),
-    wbFormIDCk(XLRL, 'Location Reference', [LCRT, NULL]),
+    wbFormIDCk(XLRL, 'Location Reference', [LCRT, LCTN, NULL]),
 
     wbXESP,
     wbRArray('Linked References', wbStruct(XLKR, 'Linked Reference', [
-      wbFormIDCk('Keyword/Ref', [KYWD, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA, NULL]),
-      wbFormIDCk('Ref', [ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA])
+      wbFormIDCk('Keyword/Ref', [KYWD, PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA, NULL]),
+      wbFormIDCk('Ref', [PLYR, ACHR, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA])
     ], cpNormal, False, nil, 1)),
 
     wbRArray('Patrol', wbRStruct('Data', [
@@ -11647,7 +11652,8 @@ b  wbTints := wbRArray('Tint Masks', wbRStruct('Tint Assets', [
       wbEmpty(XMRK, 'Map Data Marker'),
       wbInteger(FNAM, 'Flags', itU8, wbFlags([
         {0x01} 'Visible',
-        {0x02} 'Can Travel To'
+        {0x02} 'Can Travel To',
+        {0x04} 'Unknown 2'
       ]), cpNormal, True),
       wbFULLReq,
       wbStruct(TNAM, '', [
