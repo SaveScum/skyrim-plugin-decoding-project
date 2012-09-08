@@ -5628,8 +5628,8 @@ begin
 
   wbActorValue := wbInteger('Actor Value', itS32, wbActorValueEnum);
 
-  wbETYP := wbFormIDCk(ETYP, 'Equiptment Type', [EQUP, NULL]);
-  wbETYPReq := wbFormIDCk(ETYP, 'Equiptment Type', [EQUP, NULL], False, cpNormal, True);
+  wbETYP := wbFormIDCk(ETYP, 'Equipment Type', [EQUP, NULL]);
+  wbETYPReq := wbFormIDCk(ETYP, 'Equipment Type', [EQUP, NULL], False, cpNormal, True);
 
   wbFormTypeEnum := wbEnum([], [
      0, 'Activator',
@@ -9010,9 +9010,7 @@ begin
   wbRecord(EQUP, 'Equip Type', [
     wbEDIDReq,
     wbArray(PNAM, 'Slot Parents', wbFormID('Can Be Equipped'), 0, nil, nil, cpNormal, False),
-    wbInteger(DATA, 'Flags', itU32, wbFlags([
-      'Use All Parents'
-    ]), cpNormal, True)
+    wbInteger(DATA, 'Use All Parents', itU32, wbEnum(['False', 'True']))
   ]);
 
   wbRecord(RELA, 'Relationship', [
@@ -9191,6 +9189,7 @@ end;
 
 procedure DefineTES5k;
 begin
+
   wbRecord(OTFT, 'Outfit', [
     wbEDIDReq,
     wbArrayS(INAM, 'Items', wbFormIDCk('Item', [ARMO, LVLI]))
@@ -9260,7 +9259,7 @@ begin
     wbEDIDReq,
     wbUnknown(CNAM),
     wbFormID(GNAM, 'Category'),
-    wbFormIDCk(SNAM, 'String', [SNDR, NULL]),
+    wbFormIDCk(SNAM, 'Alternate Sound For', [SNDR, NULL]),
     wbRArray('Sounds',
       wbRStruct('Sound Files', [
         wbString(ANAM, 'File Name')
@@ -9775,11 +9774,11 @@ begin
     wbRArrayS('Leveled List Entries',
       wbRStructExSK([0], [1], 'Leveled List Entry', [
         wbStructExSK(LVLO , [0, 2], [3], 'Base Data', [
-          wbInteger('Level', itU16),
-          wbByteArray('Unknown', 2, cpIgnore),
+          wbInteger('Level', itS16),
+          wbByteArray('Unknown', 2),
           wbFormIDCk('Reference', [NPC_, LVLN]),
-          wbInteger('Count', itU16),
-          wbByteArray('Unknown', 2, cpIgnore)
+          wbInteger('Count', itS16),
+          wbByteArray('Unknown', 2)
         ]),
 				wbCOED
       ], []),
@@ -9802,12 +9801,12 @@ begin
     wbRArrayS('Leveled List Entries',
       wbRStructExSK([0], [1], 'Leveled List Entry', [
         wbStructExSK(LVLO , [0, 2], [3], 'Base Data', [
-          wbInteger('Level', itU16),
-          wbByteArray('Unknown', 2, cpIgnore),LLCT,
+          wbInteger('Level', itS16),
+          wbByteArray('Unknown', 2),LLCT,
     wbRArrayS('Leveled List Entries',
   APPA, MISC, WEAP, BOOK, LVLI, KEYM, ALCH, LIGH, INGR, SLGM, SCRLtru
-          wbInteger('Count', itU16),
-          wbByteArray('Unknown', 2, cpIgnore)
+          wbInteger('Count', itS16),
+          wbByteArray('Unknown', 2)
         ]),
         wbCOED
       ], [])
@@ -9827,11 +9826,11 @@ begin
     wbRArrayS('Leveled List Entries',
       wbRStructSK([0], 'Leveled List Entry', [
         wbStructExSK(LVLO , [0, 2], [3], 'Base Data', [
-        wbInteger('Level', itU16),
-        wbByteArray('Unknown', 2, cpIgnore),
+        wbInteger('Level', itS16),
+        wbByteArray('Unknown', 2),
         wbFormIDCk('Reference', [SPEL]),
-        wbInteger('Count', itU16),
-        wbByteArray('Unknown', 2, cpIgnore)
+        wbInteger('Count', itS16),
+        wbByteArray('Unknown', 2)
       ])
       ], [])
     )
@@ -11794,7 +11793,7 @@ b  wbTints := wbRArray('Tint Masks', wbRStruct('Tint Assets', [
       wbString(MAST, 'Filename', 0, cpNormal, True),
       wbByteArray(DATA, 'Unknown', 8, cpIgnore, True)
     ], [ONAM])),
-    wbArray(ONAM, 'Overriden Forms',
+    wbArray(ONAM, 'Overridden Forms',
       wbFormIDCk('Form', [ACHR, LAND, NAVM, REFR, PGRE, PHZD, PARW, PBAR, PBEA, PCON, PFLA]),
       0, nil, nil, cpNormal, False, wbTES4ONAMDontShow),
     wbByteArray(SCRN, 'Screenshot'),
@@ -11805,6 +11804,7 @@ end;
 
 procedure DefineTES5o;
 begin
+
   wbRecord(TREE, 'Tree', [
     wbEDIDReq,
     wbOBNDReq,
